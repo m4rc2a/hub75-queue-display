@@ -287,6 +287,7 @@ void Segment::resetIfRequired() {
       needsBlank = false;
     }
   }
+  endImagePlayback(this);
 }
 
 void Segment::setUpLeds() {
