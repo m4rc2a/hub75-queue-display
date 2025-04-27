@@ -324,49 +324,52 @@ bool strip_uses_global_leds(void) __attribute__((pure));  // WLEDMM implemented 
 #define FX_MODE_WAVESINS               184
 #define FX_MODE_ROCKTAVES              185
 #define FX_MODE_2DAKEMI                186
-#define FX_MODE_PARTICLEVOLCANO        187
-#define FX_MODE_PARTICLEFIRE           188
-#define FX_MODE_PARTICLEFIREWORKS      189
-#define FX_MODE_PARTICLEVORTEX         190
-#define FX_MODE_PARTICLEPERLIN         191
-#define FX_MODE_PARTICLEPIT            192
-#define FX_MODE_PARTICLEBOX            193
-#define FX_MODE_PARTICLEATTRACTOR      194
-#define FX_MODE_PARTICLEIMPACT         195
-#define FX_MODE_PARTICLEWATERFALL      196
-#define FX_MODE_PARTICLESPRAY          197
-#define FX_MODE_PARTICLESGEQ           198
-#define FX_MODE_PARTICLECENTERGEQ      199
-#define FX_MODE_PARTICLEGHOSTRIDER     200
-#define FX_MODE_PARTICLEBLOBS          201
-#define FX_MODE_PSDRIP                 202
-#define FX_MODE_PSPINBALL              203
-#define FX_MODE_PSDANCINGSHADOWS       204
-#define FX_MODE_PSFIREWORKS1D          205
-#define FX_MODE_PSSPARKLER             206
-#define FX_MODE_PSHOURGLASS            207
-#define FX_MODE_PS1DSPRAY              208
-#define FX_MODE_PSBALANCE              209
-#define FX_MODE_PSCHASE                210
-#define FX_MODE_PSSTARBURST            211
-#define FX_MODE_PS1DGEQ                212
-#define FX_MODE_PSFIRE1D               213
-#define FX_MODE_PS1DSONICSTREAM        214
-#define FX_MODE_PS1DSONICBOOM          215
-#define FX_MODE_PS1DSPRINGY            216
-#define FX_MODE_ARTIFX                 217 //WLEDMM ARTIFX
-#define FX_MODE_PARTYJERK              218
+#define FX_MODE_ARTIFX                 187 //WLEDMM ARTIFX
+#define FX_MODE_PARTYJERK              188
 
 // Experimental Audioresponsive modes from WLED-SR
-// #define FX_MODE_3DSphereMove           219 // experimental WLED-SR "cube" mode
-#define FX_MODE_POPCORN_AR             220 // WLED-SR audioreactive popcorn
-#define FX_MODE_MULTI_COMET_AR         221 // WLED-SR audioreactive multi-comet
-#define FX_MODE_STARBURST_AR           222 // WLED-SR audioreactive fireworks starburst
-// #define FX_MODE_PALETTE_AR             223 // WLED-SR audioreactive palette
-#define FX_MODE_FIREWORKS_AR           224 // WLED-SR audioreactive fireworks
-#define FX_MODE_GEQLASER               225 // WLED-MM GEQ Laser
-#define FX_MODE_2DPAINTBRUSH           226 // WLED-MM Paintbrush
-#define FX_MODE_2DSNOWFALL             227 // WLED-MM Snowfall
+// #define FX_MODE_3DSphereMove           189 // experimental WLED-SR "cube" mode
+#define FX_MODE_POPCORN_AR             190 // WLED-SR audioreactive popcorn
+#define FX_MODE_MULTI_COMET_AR         191 // WLED-SR audioreactive multi-comet
+#define FX_MODE_STARBURST_AR           192 // WLED-SR audioreactive fireworks starburst
+// #define FX_MODE_PALETTE_AR             193 // WLED-SR audioreactive palette
+#define FX_MODE_FIREWORKS_AR           194 // WLED-SR audioreactive fireworks
+#define FX_MODE_GEQLASER               195 // WLED-MM GEQ Laser
+#define FX_MODE_2DPAINTBRUSH           196 // WLED-MM Paintbrush
+#define FX_MODE_2DSNOWFALL             197 // WLED-MM Snowfall
+
+// Particle FX
+#define FX_MODE_PARTICLEVOLCANO        198
+#define FX_MODE_PARTICLEFIRE           199
+#define FX_MODE_PARTICLEFIREWORKS      200
+#define FX_MODE_PARTICLEVORTEX         201
+#define FX_MODE_PARTICLEPERLIN         202
+#define FX_MODE_PARTICLEPIT            203
+#define FX_MODE_PARTICLEBOX            204
+#define FX_MODE_PARTICLEATTRACTOR      205
+#define FX_MODE_PARTICLEIMPACT         206
+#define FX_MODE_PARTICLEWATERFALL      207
+#define FX_MODE_PARTICLESPRAY          208
+#define FX_MODE_PARTICLESGEQ           209
+#define FX_MODE_PARTICLECENTERGEQ      210
+#define FX_MODE_PARTICLEGHOSTRIDER     211
+#define FX_MODE_PARTICLEBLOBS          212
+#define FX_MODE_PSDRIP                 213
+#define FX_MODE_PSPINBALL              214
+#define FX_MODE_PSDANCINGSHADOWS       215
+#define FX_MODE_PSFIREWORKS1D          216
+#define FX_MODE_PSSPARKLER             217
+#define FX_MODE_PSHOURGLASS            218
+#define FX_MODE_PS1DSPRAY              219
+#define FX_MODE_PSBALANCE              220
+#define FX_MODE_PSCHASE                221
+#define FX_MODE_PSSTARBURST            222
+#define FX_MODE_PS1DGEQ                223
+#define FX_MODE_PSFIRE1D               224
+#define FX_MODE_PS1DSONICSTREAM        225
+#define FX_MODE_PS1DSONICBOOM          226
+#define FX_MODE_PS1DSPRINGY            227
+
 #define MODE_COUNT                     228
 
 typedef enum mapping1D2D {
