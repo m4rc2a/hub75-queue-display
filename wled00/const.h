@@ -9,8 +9,8 @@
 
 //Defaults
 #define DEFAULT_CLIENT_SSID "Your_Network"
-#define DEFAULT_AP_SSID     "WLED-AP"
-#define DEFAULT_AP_PASS     "wled1234"
+#define DEFAULT_AP_SSID     "Matrix-WLED"
+#define DEFAULT_AP_PASS     "morpheus"
 #define DEFAULT_OTA_PASS    "wledota"
 #define DEFAULT_MDNS_NAME   "x"
 
