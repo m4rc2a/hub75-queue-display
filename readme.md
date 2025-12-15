@@ -8,7 +8,7 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 - **Workflow:**  
   1. A number is drawn and printed using a thermal printer controlled by an Arduino.
   2. After printing, the Arduino sends the number via UART to the MatrixPortal S3 running WLED-MM.
-  3. The number is displayed prominently on the HUB75 LED matrix.
+  3. The number is displayed on the HUB75 LED matrix.
 - **Firmware:** This repo contains only the customized WLED-MM firmware with the Serial-to-Display usermod enabled.
 
 ## Hardware
@@ -47,7 +47,7 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
    ```
 4. Configure the Serial-to-Display usermod via the WLED web UI under **Config > Usermods**.
 
-See [`usermods/Serial_to_Display/readme.md`](usermods/Serial_to_Display/readme.md) for detailed wiring and configuration instructions.
+See [`usermods/Serial_int_Display/readme.md`](usermods/Serial_int_Display/readme.md) for detailed wiring and configuration instructions.
 
 ## Repository Structure
 
@@ -66,6 +66,7 @@ package.json           # Node.js dependencies and scripts
 - [ ] Integration of a larger and more readable font for number display.
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
+- [ ] Add a QR code to the display for connecting to the Wi-Fi.
 
 ## Special Thanks
 
