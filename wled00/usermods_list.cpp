@@ -410,6 +410,6 @@ void registerUsermods()
 #ifdef USERMOD_AUTO_PLAYLIST
   usermods.add(new AutoPlaylistUsermod(false));
 #endif
-  
+
 usermods.add(new SerialToDisplay("SerialToDisplay", true));
 }
