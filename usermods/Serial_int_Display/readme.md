@@ -4,7 +4,7 @@ This WLED Usermod allows you to display numerical data received via UART directl
 
 Many ESP32 boards have several UART interfaces, including the MatrixPortalS3:
 
-- UART0: Normally used for USB serial/debug (RX=3, TX=1) wled.h:321-329
+- UART0: Normally used for USB serial/debug (RX=3, TX=1)
 - UART1: Available for user mods <-- This is used (Serial 1)
 - UART2: Used by DMX if enabled SparkFunDMX.cpp:51
 
