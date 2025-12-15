@@ -15,12 +15,11 @@ class SerialToDisplay : public Usermod {
     uint32_t baudrate; // UART boudrate
 
     uint32_t _oldBaudrate;
-    
-    uint8_t _lastReceivedNumber = 0;
+    uint8_t _lastReceivedNumber;
 
+    bool firstReceived = true;
 
   public:
-
     SerialToDisplay(const char *name, bool enabled):Usermod(name, enabled) {} //WLEDMM
 
     // non WLED related methods, may be used for data exchange between usermods (non-inline methods should be defined out of class)
@@ -84,7 +83,7 @@ class SerialToDisplay : public Usermod {
         uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
         // Refresh only if the value has changed
-        if (_lastReceivedNumber != receivedByte) {
+        if (firstReceived || _lastReceivedNumber != receivedByte) {
           _lastReceivedNumber = receivedByte;
 
           Segment* segment = &strip.getSegment(segment_id);
