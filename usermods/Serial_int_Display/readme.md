@@ -10,17 +10,16 @@ Many ESP32 boards have several UART interfaces, including the MatrixPortalS3:
 
 ## Table of Contents
 
-*   [Features](#features)
-*   [Compatibility](#compatibility)
-*   [Installation](#installation)
-    *   [Placing Files](#placing-files)
-    *   [PlatformIO Configuration](#platformio-configuration)
-    *   [Compiling and uploading](#compiling-and-uploading)
-*   [Configuration (WLED web interface)](#configuration-wled-web-interface)
-*   [Cabling](#cabling)
-*   [Usage](#usage)
-*   [Example usermod code](#example-usermod-code)
-
+* [Features](#features)
+* [Compatibility](#compatibility)
+* [Installation](#installation)
+  * [Place Files](#1-place-files)
+  * [PlatformIO Configuration](#platformio-configuration)
+  * [Compile and Upload](#3-compile-and-upload)
+* [Configuration (WLED Web Interface)](#configuration-wled-web-interface)
+* [Cabling](#cabling)
+* [Usage](#usage)
+* [Example (Binary Byte Transfer)](#example-binary-byte-transfer)
 
 ## Features
 
