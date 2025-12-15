@@ -144,6 +144,9 @@
 #define USERMOD_ID_ANIMARTRIX               93     //Usermod "usermod_v2_animartrix.h"
 #define USERMOD_ID_AUTOPLAYLIST          94     // Usermod usermod_v2_auto_playlist.h
 
+// hub75-queue-display
+#define USERMOD_ID_SERIAL_INT_DISPLAY  123    //Usermod "usermod_serial_int_display.h"
+
 //Access point behavior
 #define AP_BEHAVIOR_BOOT_NO_CONN          0     //Open AP when no connection after boot
 #define AP_BEHAVIOR_NO_CONN               1     //Open when no connection (either after boot or if connection is lost)
@@ -203,9 +206,6 @@
 #define DMX_MODE_EFFECT_SEGMENT   8            //trigger standalone effects of WLED (15 channels per segment)
 #define DMX_MODE_EFFECT_SEGMENT_W 9            //trigger standalone effects of WLED (18 channels per segment)
 #define DMX_MODE_PRESET           10           //apply presets (1 channel)
-
-// hub75-queue-display mods
-#define USERMOD_ID_SERIAL_TO_DISPLAY 123
 
 //Light capability byte (unused) 0bRCCCTTTT
 //bits 0/1/2/3: specifies a type of LED driver. A single "driver" may have different chip models but must have the same protocol/behavior
