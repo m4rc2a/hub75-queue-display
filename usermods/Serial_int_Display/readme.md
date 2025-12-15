@@ -14,7 +14,7 @@ Many ESP32 boards have several UART interfaces, including the MatrixPortalS3:
 * [Compatibility](#compatibility)
 * [Installation](#installation)
   * [Place Files](#1-place-files)
-  * [PlatformIO Configuration](#platformio-configuration)
+  * [PlatformIO Configuration](#2-platformio-configuration)
   * [Compile and Upload](#3-compile-and-upload)
 * [Configuration (WLED Web Interface)](#configuration-wled-web-interface)
 * [Cabling](#cabling)
@@ -41,7 +41,7 @@ Place the following two files in the `wled00/usermods/` directory of your WLED-M
 
 * `usermod_serial_int_display.h`
 
-### PlatformIO Configuration
+### 2. PlatformIO Configuration
 
 In order for WLED to recognize and compile this usermod, you must enable it in the `platformio.ini` file of your WLED-MM project.
 
