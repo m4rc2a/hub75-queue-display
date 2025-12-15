@@ -2,7 +2,7 @@
 
 #include "wled.h"
 
-class SerialToDisplay : public Usermod {
+class SerialIntDisplay : public Usermod {
 
   private:
     // --- Serial configuration ---
@@ -23,7 +23,7 @@ class SerialToDisplay : public Usermod {
      * Constructor: Initializes usermod with name and enabled state.
      * No hardware is initialized here.
      */
-    SerialToDisplay(const char *name, bool enabled)
+    SerialIntDisplay(const char *name, bool enabled)
       : Usermod(name, enabled) {}
 
     /**
@@ -243,6 +243,6 @@ class SerialToDisplay : public Usermod {
      * Returns unique usermod ID.
      */
     uint16_t getId() {
-      return USERMOD_ID_SERIAL_TO_DISPLAY;
+      return USERMOD_ID_SERIAL_INT_DISPLAY;
     }
 };

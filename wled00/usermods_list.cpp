@@ -12,7 +12,9 @@
  */
 //#include "../usermods/EXAMPLE_v2/usermod_v2_example.h"
 
-#include "../usermods/Serial_to_Display/usermod_serial_to_display.h"
+#ifdef USERMOD_SERIAL_INT_DISPLAY
+#include "../usermods/Serial_int_Display/usermod_serial_int_display.h"
+#endif
 
 #ifdef USERMOD_BATTERY
 #include "../usermods/Battery/usermod_v2_Battery.h"
@@ -412,5 +414,8 @@ void registerUsermods()
   usermods.add(new AutoPlaylistUsermod(false));
 #endif
 
-usermods.add(new SerialToDisplay("SerialToDisplay", true));
+#ifdef USERMOD_SERIAL_INT_DISPLAY
+usermods.add(new SerialIntDisplay("SerialIntDisplay", true));
+#endif
+
 }
