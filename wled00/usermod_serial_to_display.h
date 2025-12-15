@@ -12,6 +12,8 @@ class SerialToDisplay : public Usermod {
     int8_t uart_rx_pin = 8;  // Standard-Pins  
     int8_t uart_tx_pin = 18;
 
+    int8_t segment_id = 0;
+
     uint8_t _lastReceivedNumber = 0;
 
   public:
@@ -80,7 +82,7 @@ class SerialToDisplay : public Usermod {
         if (_lastReceivedNumber != receivedByte) {
           _lastReceivedNumber = receivedByte;
 
-          Segment* segment = &strip.getSegment(0);
+          Segment* segment = &strip.getSegment(segment_id);
 
           if (segment) { // test if segment even exsist
             char newSegmentName[4]; // z.B. "255" + '\0'
@@ -186,6 +188,7 @@ class SerialToDisplay : public Usermod {
       JsonObject top = root[FPSTR(_name)]; //WLEDMM
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
+      top["segment_id"] = segment_id;
     }
 
 
@@ -213,6 +216,7 @@ class SerialToDisplay : public Usermod {
 
       configComplete &= getJsonValue(top["uart_rx_pin"], uart_rx_pin, 8);
       configComplete &= getJsonValue(top["uart_tx_pin"], uart_tx_pin, 18);
+      configCOmplete &= getJsonValue(top["segment_id"], segment_id, 0);
 
       return configComplete;
     }
