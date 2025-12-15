@@ -2,24 +2,17 @@
 
 #include "wled.h"
 
-//class name. Use something descriptive and leave the ": public Usermod" part :)
 class SerialToDisplay : public Usermod {
 
   private:
 
     // Private class members. You can declare variables and functions only accessible to your usermod here
 
-    // set your config variables to their boot default value (this can also be done in readFromConfig() or a constructor if you prefer)
+    // set your config variables to their default value
     int8_t uart_rx_pin = 8;  // Standard-Pins  
     int8_t uart_tx_pin = 18;
 
     uint8_t _lastReceivedNumber = 0;
-
-    // These config variables have defaults set inside readFromConfig()
-
-    // any private methods should go here (non-inline method should be defined out of class)
-    void publishMqtt(const char* state, bool retain = false); // example for publishing MQTT message
-
 
   public:
 
@@ -61,20 +54,9 @@ class SerialToDisplay : public Usermod {
      * You can use it to initialize variables, sensors or similar.
      */
     void setup() {
-      // do your set-up here
       Serial1.begin(9600);
       initDone = true;
     }
-
-
-    /*
-     * connected() is called every time the WiFi is (re)connected
-     * Use it to initialize network interfaces
-     */
-    void connected() {
-      //Serial.println("Connected to WiFi!");
-    }
-
 
     /*
      * loop() is called continuously. Here you can check for events, read sensors, etc.
@@ -142,9 +124,8 @@ class SerialToDisplay : public Usermod {
       if (!initDone || !enabled) return;  // prevent crash on boot applyPreset()
 
       JsonObject usermod = root[FPSTR(_name)];
-      if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
 
-      //usermod["user0"] = userVar0;
+      if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
     }
 
 
@@ -161,8 +142,6 @@ class SerialToDisplay : public Usermod {
         // expect JSON usermod data in usermod name object: {"ExampleUsermod:{"user0":10}"}
         userVar0 = usermod["user0"] | userVar0; //if "user0" key exists in JSON, update, else keep old value
       }
-      // you can as well check WLED state JSON keys
-      //if (root["bri"] == 255) Serial.println(F("Don't burn down your garage!"));
     }
 
 
@@ -263,31 +242,7 @@ class SerialToDisplay : public Usermod {
     void handleOverlayDraw()
     {
       //strip.setPixelColor(0, RGBW32(0,0,0,0)) // set the first pixel to black
-    }
-
-
-    /**
-     * handleButton() can be used to override default button behaviour. Returning true
-     * will prevent button working in a default way.
-     * Replicating button.cpp
-     */
-    bool handleButton(uint8_t b) {
-      yield();
-      // ignore certain button types as they may have other consequences
-      if (!enabled
-       || buttonType[b] == BTN_TYPE_NONE
-       || buttonType[b] == BTN_TYPE_RESERVED
-       || buttonType[b] == BTN_TYPE_PIR_SENSOR
-       || buttonType[b] == BTN_TYPE_ANALOG
-       || buttonType[b] == BTN_TYPE_ANALOG_INVERTED) {
-        return false;
-      }
-
-      bool handled = false;
-      // do your button handling here
-      return handled;
-    }
-  
+    }  
 
 #ifndef WLED_DISABLE_MQTT
     /**
@@ -339,16 +294,7 @@ class SerialToDisplay : public Usermod {
     {
       return USERMOD_ID_EXAMPLE;
     }
-
-   //More methods can be added in the future, this example will then be extended.
-   //Your usermod will remain compatible as it does not need to implement all methods from the Usermod base class!
 };
-
-
-// add more strings here to reduce flash memory usage
-
-
-// implementation of non-inline member methods
 
 void SerialToDisplay::publishMqtt(const char* state, bool retain)
 {
