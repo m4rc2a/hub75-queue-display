@@ -9,7 +9,7 @@ class SerialToDisplay : public Usermod {
     // Private class members. You can declare variables and functions only accessible to your usermod here
 
     // set your config variables to their default value
-    int8_t uart_rx_pin = 8;  // Standard-Pins  
+    int8_t uart_rx_pin = 8;  // Standard-Pins
     int8_t uart_tx_pin = 18;
 
     int8_t segment_id = 0;
@@ -63,17 +63,17 @@ class SerialToDisplay : public Usermod {
     void setup() {
       Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin);
       _oldBaudrate = baudrate;
-      
+
       initDone = true;
     }
 
     /*
      * loop() is called continuously. Here you can check for events, read sensors, etc.
-     * 
+     *
      * Tips:
      * 1. You can use "if (WLED_CONNECTED)" to check for a successful network connection.
      *    Additionally, "if (WLED_MQTT_CONNECTED)" is available to check for a connection to an MQTT broker.
-     * 
+     *
      * 2. Try to avoid using the delay() function. NEVER use delays longer than 10 milliseconds.
      *    Instead, use a timer check as shown here.
      */
@@ -101,7 +101,7 @@ class SerialToDisplay : public Usermod {
             strncpy(segment->name, newSegmentName, sizeof(segment->name) - 1);
             segment->name[sizeof(segment->name)-1] = '\0'; // Nulltermination
             strip.trigger();
-          }          
+          }
         }
       }
     }
@@ -158,11 +158,11 @@ class SerialToDisplay : public Usermod {
      * addToConfig() can be used to add custom persistent settings to the cfg.json file in the "um" (usermod) object.
      * It will be called by WLED when settings are actually saved (for example, LED settings are saved)
      * If you want to force saving the current state, use serializeConfig() in your loop().
-     * 
+     *
      * CAUTION: serializeConfig() will initiate a filesystem write operation.
      * It might cause the LEDs to stutter and will cause flash wear if called too often.
      * Use it sparingly and always in the loop, never in network callbacks!
-     * 
+     *
      * addToConfig() will make your settings editable through the Usermod Settings page automatically.
      *
      * Usermod Settings Overview:
@@ -182,11 +182,11 @@ class SerialToDisplay : public Usermod {
      *   - Tip: use int8_t to store the pin value in the Usermod, so a -1 value (pin not set) can be used
      *
      * See usermod_v2_auto_save.h for an example that saves Flash space by reusing ArduinoJson key name strings
-     * 
-     * If you need a dedicated settings page with custom layout for your Usermod, that takes a lot more work.  
+     *
+     * If you need a dedicated settings page with custom layout for your Usermod, that takes a lot more work.
      * You will have to add the setting to the HTML, xml.cpp and set.cpp manually.
      * See the WLED Soundreactive fork (code and wiki) for reference.  https://github.com/atuline/WLED
-     * 
+     *
      * I highly recommend checking out the basics of ArduinoJson serialization and deserialization in order to use custom settings!
      */
     void addToConfig(JsonObject& root)
@@ -203,16 +203,16 @@ class SerialToDisplay : public Usermod {
     /*
      * readFromConfig() can be used to read back the custom settings you added with addToConfig().
      * This is called by WLED when settings are loaded (currently this only happens immediately after boot, or after saving on the Usermod Settings page)
-     * 
+     *
      * readFromConfig() is called BEFORE setup(). This means you can use your persistent values in setup() (e.g. pin assignments, buffer sizes),
      * but also that if you want to write persistent values to a dynamic buffer, you'd need to allocate it here instead of in setup.
      * If you don't know what that is, don't fret. It most likely doesn't affect your use case :)
-     * 
+     *
      * Return true in case the config values returned from Usermod Settings were complete, or false if you'd like WLED to save your defaults to disk (so any missing values are editable in Usermod Settings)
-     * 
+     *
      * getJsonValue() returns false if the value is missing, or copies the value into the variable provided and returns true if the value is present
      * The configComplete variable is true only if the "exampleUsermod" object and all values are present.  If any values are missing, WLED will know to call addToConfig() to save them
-     * 
+     *
      * This function is guaranteed to be called on boot, but could also be called every time settings are updated
      */
     bool readFromConfig(JsonObject& root)
@@ -269,7 +269,7 @@ class SerialToDisplay : public Usermod {
     void handleOverlayDraw()
     {
       //strip.setPixelColor(0, RGBW32(0,0,0,0)) // set the first pixel to black
-    }  
+    }
 
 #ifndef WLED_DISABLE_MQTT
     /**
@@ -317,8 +317,7 @@ class SerialToDisplay : public Usermod {
      * getId() allows you to optionally give your V2 usermod an unique ID (please define it in const.h!).
      * This could be used in the future for the system to determine whether your usermod is installed.
      */
-    uint16_t getId() // TODO: eindeutige ID
-    {
-      return USERMOD_ID_EXAMPLE;
+    uint16_t getId() {
+      return USERMOD_ID_SERIAL_TO_DISPLAY;
     }
 };

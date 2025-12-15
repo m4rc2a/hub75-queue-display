@@ -204,6 +204,9 @@
 #define DMX_MODE_EFFECT_SEGMENT_W 9            //trigger standalone effects of WLED (18 channels per segment)
 #define DMX_MODE_PRESET           10           //apply presets (1 channel)
 
+// hub75-queue-display mods
+#define USERMOD_ID_SERIAL_TO_DISPLAY 123
+
 //Light capability byte (unused) 0bRCCCTTTT
 //bits 0/1/2/3: specifies a type of LED driver. A single "driver" may have different chip models but must have the same protocol/behavior
 //bits 4/5/6: specifies the class of LED driver - 0b000 (dec. 0-15)  unconfigured/reserved
@@ -261,7 +264,7 @@
 #define NUM_PWM_PINS(t) ((t) - 40) //for analog PWM 41-45 only
 #define IS_2PIN(t)      ((t) > 47)
 #define IS_VIRTUAL(t)        ( ((t) <= TYPE_RESERVED) || (((t) >= TYPE_NET_DDP_RGB) && ((t) < (TYPE_NET_DDP_RGB + 16))) ) // WLEDMM 80..95 are network "virtual" busses
-#define EXCLUDE_FROM_ABL(t)  ( IS_VIRTUAL(t) || ( (t) >= (TYPE_HUB75MATRIX) && (t) < (TYPE_HUB75MATRIX + 10)))  // WLEDMM do not apply auto-brightness-limiter on these bus types 
+#define EXCLUDE_FROM_ABL(t)  ( IS_VIRTUAL(t) || ( (t) >= (TYPE_HUB75MATRIX) && (t) < (TYPE_HUB75MATRIX + 10)))  // WLEDMM do not apply auto-brightness-limiter on these bus types
 
 //Color orders
 #define COL_ORDER_GRB             0           //GRB(w),defaut
@@ -425,7 +428,7 @@
   #else
     #define MAX_LEDS_PER_BUS 2048     // may not be enough for fast LEDs (i.e. APA102)
   #endif
-#endif  
+#endif
 #endif
 
 // string temp buffer (now stored in stack locally) // WLEDMM ...which is actually not the greatest design choice on ESP32
@@ -538,7 +541,7 @@
 
 // HW_PIN_SCL & HW_PIN_SDA are used for information in usermods settings page and usermods themselves
 // which GPIO pins are actually used in a hardware layout (controller board)
-//WLEDMM: unchangeable pins are not treated here by undef them, but elsewhere in the code 
+//WLEDMM: unchangeable pins are not treated here by undef them, but elsewhere in the code
 // defaults for 1st I2C on ESP32 (Wire global)
 #ifndef HW_PIN_SCL
   #define HW_PIN_SCL -1 //WLEDMM if not defined, -1 will be used (not SCL/22) (also for esp8266?)
@@ -549,7 +552,7 @@
 
 // HW_PIN_SCLKSPI & HW_PIN_MOSISPI & HW_PIN_MISOSPI are used for information in usermods settings page and usermods themselves
 // which GPIO pins are actually used in a hardware layout (controller board)
-//WLEDMM: unchangeable pins are not treated here by undef them, but elsewhere in the code 
+//WLEDMM: unchangeable pins are not treated here by undef them, but elsewhere in the code
 // defaults for VSPI on ESP32 (SPI global, SPI.cpp) as HSPI is used by WLED (bus_wrapper.h)
 #ifndef HW_PIN_CLOCKSPI
   #define HW_PIN_CLOCKSPI -1 //WLEDMM if not defined -1 will be used (not SCK/18)
