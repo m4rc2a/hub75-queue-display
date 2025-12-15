@@ -355,7 +355,7 @@ class SerialToDisplay : public Usermod {
 
 // implementation of non-inline member methods
 
-void MyExampleUsermod::publishMqtt(const char* state, bool retain)
+void SerialToDisplay::publishMqtt(const char* state, bool retain)
 {
 #ifndef WLED_DISABLE_MQTT
   //Check if MQTT Connected, otherwise it will crash the 8266
