@@ -1,4 +1,4 @@
-#ifndef WLED_PIN_MANAGER_H
+ #ifndef WLED_PIN_MANAGER_H
 #define WLED_PIN_MANAGER_H
 /*
  * Registers pins so there is no attempt for two interfaces to use the same pin
