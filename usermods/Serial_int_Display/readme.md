@@ -118,7 +118,7 @@ Connect your MatrixPortal S3 to the external serial device (e.g., another microc
 
 *   **RX to TX, TX to RX:** Make sure that the transmit pin (TX) of one device is connected to the receive pin (RX) of the other device.
 *   **Connect GND:** The ground pins (GND) of both devices must always be connected to each other to ensure a common reference voltage, otherwise you will only get garbage.
-*   **Voltage level:** The GPIO pins of the ESP32-S3 operate at 3.3V. If your external serial device operates at 5V, you will need a [**logic level converter (level shifter)**](https://en.wikipedia.org/wiki/Comparator#Level_shifter) or you can build a [voltage divider](https://en.wikipedia.org/wiki/Voltage_divider) yourself between the devices to prevent damage to the MatrixPortal S3.
+*   **Voltage level:** The GPIO pins of the MatrixPortal S3 operate at 3.3V. If your external serial device operates at 5V, you will need a [**logic level converter (level shifter)**](https://en.wikipedia.org/wiki/Comparator#Level_shifter) or you can build a [voltage divider](https://en.wikipedia.org/wiki/Voltage_divider) yourself between the devices to prevent damage to the MatrixPortal S3.
 
 ## Usage
 
@@ -139,8 +139,8 @@ Serial.write(value); // Sends the single byte 0x2A (42 in decimal)
 
 The number `42` is displayed on the LED matrix. It will remain displayed until a new value is received.
 
-The user mod reads the received byte **directly as a binary value** (not as a character or string) and displays the corresponding integer on the matrix.  
+The usermod reads the received byte **directly as a binary value** (not as a character or string) and displays the corresponding integer on the matrix.  
 If multiple bytes or unexpected data formats are received, the behaviour may not be as expected.
 
-> **Note:**  
-> The Arduino function `Serial.write(value)` sends a single byte (0–255), not a string or ASCII number.
+**Note:**  
+The Arduino function `Serial.write(value)` sends a single byte (0–255), not a string or ASCII number.
