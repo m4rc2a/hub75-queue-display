@@ -10,10 +10,8 @@ class SerialToDisplay : public Usermod {
     // Private class members. You can declare variables and functions only accessible to your usermod here
 
     // set your config variables to their boot default value (this can also be done in readFromConfig() or a constructor if you prefer)
-    /* nicht mehr notwendig
     int8_t uart_rx_pin = 8;  // Standard-Pins  
     int8_t uart_tx_pin = 18;  
-    */
 
     // These config variables have defaults set inside readFromConfig()
 
