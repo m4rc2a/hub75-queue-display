@@ -92,15 +92,18 @@ class SerialToDisplay : public Usermod {
           Segment* segment = &strip.getSegment(segment_id);
 
           if (segment) { // test if segment even exsist
-            char newSegmentName[4]; // z.B. "255" + '\0'
-
-            snprintf(newSegmentName, 4, "%d", _lastReceivedNumber); // byte --> str
-                                                                    // byte 5 --> str "5"
-                                                                    // byte 200 --> str "200"
-
-            strncpy(segment->name, newSegmentName, sizeof(segment->name) - 1);
-            segment->name[sizeof(segment->name)-1] = '\0'; // Nulltermination
-            strip.trigger();
+            if (segment->name) { // test if the segment->name pointer actually points
+                                 // to a valid memory area  (prevents segmentation fault)
+              /*
+               * TODO: Find out WLED_MAX_SEGNAME_LEN (the allowed buffer size) in the wled-mm project
+               *   and use this here:
+               *     snprintf(segment->name, WLED_MAX_SEGMENT_NAME_LENGTH, "%d", lastReceivedNumber);
+               */
+              snprintf(segment->name, 4, "%d", _lastReceivedNumber); // byte --> str
+                                                                     // byte 5 --> str "5"
+                                                                     // byte 200 --> str "200"
+              strip.trigger();
+            }
           }
         }
       }
