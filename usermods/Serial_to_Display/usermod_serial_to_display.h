@@ -14,7 +14,12 @@ class SerialToDisplay : public Usermod {
 
     int8_t segment_id = 0;
 
+    uint32_t baudrate = 9600;
+
+    uint32_t _oldBaudrate = 0
+
     uint8_t _lastReceivedNumber = 0;
+
 
   public:
 
@@ -56,7 +61,9 @@ class SerialToDisplay : public Usermod {
      * You can use it to initialize variables, sensors or similar.
      */
     void setup() {
-      Serial1.begin(9600);
+      Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin);
+      _oldBaudrate = baudrate;
+      
       initDone = true;
     }
 
@@ -189,6 +196,7 @@ class SerialToDisplay : public Usermod {
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
       top["segment_id"] = segment_id;
+      top["baudrate"] = baudrate;
     }
 
 
@@ -216,8 +224,14 @@ class SerialToDisplay : public Usermod {
 
       configComplete &= getJsonValue(top["uart_rx_pin"], uart_rx_pin, 8);
       configComplete &= getJsonValue(top["uart_tx_pin"], uart_tx_pin, 18);
-      configCOmplete &= getJsonValue(top["segment_id"], segment_id, 0);
+      configComplete &= getJsonValue(top["segment_id"], segment_id, 0);
+      configComplete &= getJsonValue(top["baudrate"], baudrate, 9600);
 
+      if (initDone && baudrate != _oldBaudrate) {
+        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
+        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
+      }
+      
       return configComplete;
     }
 
@@ -226,16 +240,25 @@ class SerialToDisplay : public Usermod {
      * appendConfigData() is called when user enters usermod settings page
      * it may add additional metadata for certain entry fields (adding drop down is possible)
      * be careful not to add too much as oappend() buffer is limited to 3k
-     *
+     */
     void appendConfigData()
     {
-      oappend(SET_F("addInfo('")); oappend(String(FPSTR(_name)).c_str()); oappend(SET_F(":great")); oappend(SET_F("',1,'<i>(this is a great config value)</i>');"));
-      oappend(SET_F("addInfo('")); oappend(String(FPSTR(_name)).c_str()); oappend(SET_F(":testString")); oappend(SET_F("',1,'enter any string you want');"));
-      oappend(SET_F("dd=addDropdown('")); oappend(String(FPSTR(_name)).c_str()); oappend(SET_F("','testInt');"));
-      oappend(SET_F("addOption(dd,'Nothing',0);"));
-      oappend(SET_F("addOption(dd,'Everything',42);"));
+      // Erstelle ein Dropdown-Menü für die Baudrate
+      oappend(SET_F("dd=addDropdown('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F("','baudrate');")); // 'baudrate' ist der Schlüssel, der in addToConfig/readFromConfig verwendet wird
+
+      // Füge die gewünschten Baudraten-Optionen hinzu
+      oappend(SET_F("addOption(dd,'9600',9600);"));
+      oappend(SET_F("addOption(dd,'19200',19200);"));
+      oappend(SET_F("addOption(dd,'38400',38400);"));
+      oappend(SET_F("addOption(dd,'57600',57600);"));
+      oappend(SET_F("addOption(dd,'115200',115200);"));
+
+      oappend(SET_F("addInfo('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F(":baudrate',1,'<i>Wähle die Baudrate für die serielle Kommunikation.</i>');"));
     }
-    */
 
 
     /*
