@@ -9,23 +9,27 @@ class SerialToDisplay : public Usermod {
     // Private class members. You can declare variables and functions only accessible to your usermod here
 
     // set your config variables to their default value
-    int8_t uart_rx_pin = 8;  // Standard-Pins
-    int8_t uart_tx_pin = 18;
+    int8_t uart_rx_pin;  // Standard-Pins
+    int8_t uart_tx_pin;
+    int8_t segment_id; // wled effect Ebene
+    uint32_t baudrate; // UART boudrate
 
-    int8_t segment_id = 0;
+    uint32_t _oldBaudrate;
+    uint8_t _lastReceivedNumber;
 
-    uint32_t baudrate = 9600;
-
-    uint32_t _oldBaudrate = 0;
-
-    uint8_t _lastReceivedNumber = 0;
-
+    bool firstReceived = true;
 
   public:
-
     SerialToDisplay(const char *name, bool enabled):Usermod(name, enabled) {} //WLEDMM
 
     // non WLED related methods, may be used for data exchange between usermods (non-inline methods should be defined out of class)
+
+    void reinitSerial() {
+      if (initDone && baudrate != _oldBaudrate) {
+        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
+        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
+      }
+    }
 
     /**
      * Enable/Disable the usermod
@@ -86,7 +90,7 @@ class SerialToDisplay : public Usermod {
         uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
         // Refresh only if the value has changed
-        if (_lastReceivedNumber != receivedByte) {
+        if (firstReceived || _lastReceivedNumber != receivedByte) {
           _lastReceivedNumber = receivedByte;
 
           Segment* segment = &strip.getSegment(segment_id);
@@ -230,10 +234,7 @@ class SerialToDisplay : public Usermod {
       configComplete &= getJsonValue(top["segment_id"], segment_id, 0);
       configComplete &= getJsonValue(top["baudrate"], baudrate, 9600);
 
-      if (initDone && baudrate != _oldBaudrate) {
-        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
-        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
-      }
+      reinitSerial();
 
       return configComplete;
     }
