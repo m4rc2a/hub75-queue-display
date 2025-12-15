@@ -2,23 +2,19 @@
 
 #include "wled.h"
 
-//class name. Use something descriptive and leave the ": public Usermod" part :)
 class SerialToDisplay : public Usermod {
 
   private:
 
     // Private class members. You can declare variables and functions only accessible to your usermod here
-    bool initDone = false;
 
-    // set your config variables to their boot default value (this can also be done in readFromConfig() or a constructor if you prefer)
+    // set your config variables to their default value
     int8_t uart_rx_pin = 8;  // Standard-Pins  
-    int8_t uart_tx_pin = 18;  
+    int8_t uart_tx_pin = 18;
 
-    // These config variables have defaults set inside readFromConfig()
+    int8_t segment_id = 0;
 
-    // any private methods should go here (non-inline method should be defined out of class)
-    void publishMqtt(const char* state, bool retain = false); // example for publishing MQTT message
-
+    uint8_t _lastReceivedNumber = 0;
 
   public:
 
@@ -60,22 +56,9 @@ class SerialToDisplay : public Usermod {
      * You can use it to initialize variables, sensors or similar.
      */
     void setup() {
-      // do your set-up here
-      //Serial.println("Hello from my usermod!");
-      Serial1.begin(9600)
+      Serial1.begin(9600);
       initDone = true;
-      Serial1.write("fooooo");
     }
-
-
-    /*
-     * connected() is called every time the WiFi is (re)connected
-     * Use it to initialize network interfaces
-     */
-    void connected() {
-      //Serial.println("Connected to WiFi!");
-    }
-
 
     /*
      * loop() is called continuously. Here you can check for events, read sensors, etc.
@@ -92,23 +75,28 @@ class SerialToDisplay : public Usermod {
       // NOTE: on very long strips strip.isUpdating() may always return true so update accordingly
       if (!enabled || strip.isUpdating()) return;
 
-      // test serial connection TODO: remove this
-      if (Serial1.available()) {
-        String empfangen = Serial1.readStringUntil('\n');
-        empfangen.toUpperCase();
-        empfangen.replace(" ", "_");
-        empfangen += "!";
-        Serial1.println(empfangen);
-      }
+      if (Serial1.available() >= 1) {
+        uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
-      /*
-      // do your magic here
-      if (millis() - lastTime > 1000) {
-        //Serial.println("I'm alive!");
-        lastTime = millis();
-        // lese zeile der Seriellen Schnittstelle
+        // Refresh only if the value has changed
+        if (_lastReceivedNumber != receivedByte) {
+          _lastReceivedNumber = receivedByte;
+
+          Segment* segment = &strip.getSegment(segment_id);
+
+          if (segment) { // test if segment even exsist
+            char newSegmentName[4]; // z.B. "255" + '\0'
+
+            snprintf(newSegmentName, 4, "%d", _lastReceivedNumber); // byte --> str
+                                                                    // byte 5 --> str "5"
+                                                                    // byte 200 --> str "200"
+
+            strncpy(segment->name, newSegmentName, sizeof(segment->name) - 1);
+            segment->name[sizeof(segment->name)-1] = '\0'; // Nulltermination
+            strip.trigger();
+          }          
+        }
       }
-      */
     }
 
 
@@ -123,18 +111,9 @@ class SerialToDisplay : public Usermod {
       JsonObject user = root["u"];
       if (user.isNull()) user = root.createNestedObject("u");
 
-      //this code adds "u":{"ExampleUsermod":[20," lux"]} to the info object
-      //int reading = 20;
-      //JsonArray lightArr = user.createNestedArray(FPSTR(_name))); //name
-      //lightArr.add(reading); //value
-      //lightArr.add(F(" lux")); //unit
-
-      // if you are implementing a sensor usermod, you may publish sensor data
-      //JsonObject sensor = root[F("sensor")];
-      //if (sensor.isNull()) sensor = root.createNestedObject(F("sensor"));
-      //temp = sensor.createNestedArray(F("light"));
-      //temp.add(reading);
-      //temp.add(F("lux"));
+      JsonArray dataArr = user.createNestedArray(FPSTR(_name));
+      dataArr.add(_lastReceivedNumber);
+      dataArr.add(F("last nmber"));
     }
 
 
@@ -147,9 +126,8 @@ class SerialToDisplay : public Usermod {
       if (!initDone || !enabled) return;  // prevent crash on boot applyPreset()
 
       JsonObject usermod = root[FPSTR(_name)];
-      if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
 
-      //usermod["user0"] = userVar0;
+      if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
     }
 
 
@@ -166,8 +144,6 @@ class SerialToDisplay : public Usermod {
         // expect JSON usermod data in usermod name object: {"ExampleUsermod:{"user0":10}"}
         userVar0 = usermod["user0"] | userVar0; //if "user0" key exists in JSON, update, else keep old value
       }
-      // you can as well check WLED state JSON keys
-      //if (root["bri"] == 255) Serial.println(F("Don't burn down your garage!"));
     }
 
 
@@ -208,11 +184,11 @@ class SerialToDisplay : public Usermod {
      */
     void addToConfig(JsonObject& root)
     {
-      JsonObject top = root.createNestedObject(FPSTR(_name));
-      top[FPSTR(_enabled)] = enabled;
-      //save these vars persistently whenever settings are saved
+      Usermod::addToConfig(root);
+      JsonObject top = root[FPSTR(_name)]; //WLEDMM
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
+      top["segment_id"] = segment_id;
     }
 
 
@@ -240,6 +216,7 @@ class SerialToDisplay : public Usermod {
 
       configComplete &= getJsonValue(top["uart_rx_pin"], uart_rx_pin, 8);
       configComplete &= getJsonValue(top["uart_tx_pin"], uart_tx_pin, 18);
+      configCOmplete &= getJsonValue(top["segment_id"], segment_id, 0);
 
       return configComplete;
     }
@@ -249,7 +226,7 @@ class SerialToDisplay : public Usermod {
      * appendConfigData() is called when user enters usermod settings page
      * it may add additional metadata for certain entry fields (adding drop down is possible)
      * be careful not to add too much as oappend() buffer is limited to 3k
-     */
+     *
     void appendConfigData()
     {
       oappend(SET_F("addInfo('")); oappend(String(FPSTR(_name)).c_str()); oappend(SET_F(":great")); oappend(SET_F("',1,'<i>(this is a great config value)</i>');"));
@@ -258,6 +235,7 @@ class SerialToDisplay : public Usermod {
       oappend(SET_F("addOption(dd,'Nothing',0);"));
       oappend(SET_F("addOption(dd,'Everything',42);"));
     }
+    */
 
 
     /*
@@ -268,31 +246,7 @@ class SerialToDisplay : public Usermod {
     void handleOverlayDraw()
     {
       //strip.setPixelColor(0, RGBW32(0,0,0,0)) // set the first pixel to black
-    }
-
-
-    /**
-     * handleButton() can be used to override default button behaviour. Returning true
-     * will prevent button working in a default way.
-     * Replicating button.cpp
-     */
-    bool handleButton(uint8_t b) {
-      yield();
-      // ignore certain button types as they may have other consequences
-      if (!enabled
-       || buttonType[b] == BTN_TYPE_NONE
-       || buttonType[b] == BTN_TYPE_RESERVED
-       || buttonType[b] == BTN_TYPE_PIR_SENSOR
-       || buttonType[b] == BTN_TYPE_ANALOG
-       || buttonType[b] == BTN_TYPE_ANALOG_INVERTED) {
-        return false;
-      }
-
-      bool handled = false;
-      // do your button handling here
-      return handled;
-    }
-  
+    }  
 
 #ifndef WLED_DISABLE_MQTT
     /**
@@ -340,20 +294,11 @@ class SerialToDisplay : public Usermod {
      * getId() allows you to optionally give your V2 usermod an unique ID (please define it in const.h!).
      * This could be used in the future for the system to determine whether your usermod is installed.
      */
-    uint16_t getId()
+    uint16_t getId() // TODO: eindeutige ID
     {
       return USERMOD_ID_EXAMPLE;
     }
-
-   //More methods can be added in the future, this example will then be extended.
-   //Your usermod will remain compatible as it does not need to implement all methods from the Usermod base class!
 };
-
-
-// add more strings here to reduce flash memory usage
-
-
-// implementation of non-inline member methods
 
 void SerialToDisplay::publishMqtt(const char* state, bool retain)
 {
