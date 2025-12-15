@@ -1,4 +1,6 @@
 #include "wled.h"
+#include "usermod_serial_to_display.h"
+
 /*
  * Register your v2 usermods here!
  *   (for v1 usermods using just usermod.cpp, you can ignore this file)
@@ -409,5 +411,5 @@ void registerUsermods()
   usermods.add(new AutoPlaylistUsermod(false));
 #endif
 
-
+registerUsermod(new SerialToDisplay());
 }
