@@ -411,5 +411,5 @@ void registerUsermods()
   usermods.add(new AutoPlaylistUsermod(false));
 #endif
 
-registerUsermod(new SerialToDisplay("SerialToDisplay", true));
+usermods.add(new SerialToDisplay("SerialToDisplay", true));
 }
