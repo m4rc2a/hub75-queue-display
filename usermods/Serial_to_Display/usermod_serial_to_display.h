@@ -139,6 +139,12 @@ class SerialToDisplay : public Usermod {
       configComplete &= getJsonValue(top["segment_id"], segment_id, 0);
       configComplete &= getJsonValue(top["baudrate"], baudrate, 9600);
 
+      // Prüfe, ob segment_id gültig ist (existiert)
+      if (segment_id < 0 || segment_id >= strip.getMaxSegments()) {
+        segment_id = 0; // Fallback auf 0, falls ungültig
+        top["segment_id"] = segment_id;
+      }
+
       reinitSerial();
 
       return configComplete;
