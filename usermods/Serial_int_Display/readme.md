@@ -142,6 +142,5 @@ The number `42` is displayed on the LED matrix. It will remain displayed until a
 The user mod reads the received byte **directly as a binary value** (not as a character or string) and displays the corresponding integer on the matrix.  
 If multiple bytes or unexpected data formats are received, the behaviour may not be as expected.
 
-**Note:**  
-- The Arduino function `Serial.write(value)` sends a single byte (0–255), not a string or ASCII number.
-- On the receiver side, the byte should be read accordingly, e.g. using the function `Serial.read()`.
+> **Note:**  
+> The Arduino function `Serial.write(value)` sends a single byte (0–255), not a string or ASCII number.
