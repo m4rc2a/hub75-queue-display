@@ -16,7 +16,7 @@ class SerialToDisplay : public Usermod {
 
     uint32_t baudrate = 9600;
 
-    uint32_t _oldBaudrate = 0
+    uint32_t _oldBaudrate = 0;
 
     uint8_t _lastReceivedNumber = 0;
 
@@ -231,7 +231,7 @@ class SerialToDisplay : public Usermod {
         Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
         _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
       }
-      
+
       return configComplete;
     }
 
