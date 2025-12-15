@@ -62,11 +62,8 @@ class SerialToDisplay : public Usermod {
      */
     void setup() {
       // do your set-up here
-      //Serial.println("Hello from my usermod!");
       Serial1.begin(9600);
       initDone = true;
-
-      //Serial1.setTimeout(INT_MAX);
     }
 
 
@@ -94,7 +91,6 @@ class SerialToDisplay : public Usermod {
       // NOTE: on very long strips strip.isUpdating() may always return true so update accordingly
       if (!enabled || strip.isUpdating()) return;
 
-      // test serial connection TODO: remove this
       if (Serial1.available() >= 1) {
         uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
@@ -108,27 +104,15 @@ class SerialToDisplay : public Usermod {
             char newSegmentName[4]; // z.B. "255" + '\0'
 
             snprintf(newSegmentName, 4, "%d", _lastReceivedNumber); // byte --> str
-                                                                  // byte 5 --> str "5"
-                                                                  // byte 200 --> str "200"
+                                                                    // byte 5 --> str "5"
+                                                                    // byte 200 --> str "200"
 
             strncpy(segment->name, newSegmentName, sizeof(segment->name) - 1);
             segment->name[sizeof(segment->name)-1] = '\0'; // Nulltermination
             strip.trigger();
-          }
-          
-          Serial1.print(F("Echo (uint8_t): "));
-          Serial1.println(receivedByte);
+          }          
         }
       }
-
-      /*
-      // do your magic here
-      if (millis() - lastTime > 1000) {
-        //Serial.println("I'm alive!");
-        lastTime = millis();
-        // lese zeile der Seriellen Schnittstelle
-      }
-      */
     }
 
 
