@@ -11,7 +11,9 @@ class SerialToDisplay : public Usermod {
 
     // set your config variables to their boot default value (this can also be done in readFromConfig() or a constructor if you prefer)
     int8_t uart_rx_pin = 8;  // Standard-Pins  
-    int8_t uart_tx_pin = 18;  
+    int8_t uart_tx_pin = 18;
+
+    uint8_t _lastReceivedNumber = 0;
 
     // These config variables have defaults set inside readFromConfig()
 
@@ -63,7 +65,8 @@ class SerialToDisplay : public Usermod {
       //Serial.println("Hello from my usermod!");
       Serial1.begin(115200);
       initDone = true;
-      Serial1.write("fooooo");
+
+      //Serial1.setTimeout(INT_MAX);
     }
 
 
@@ -92,12 +95,13 @@ class SerialToDisplay : public Usermod {
       if (!enabled || strip.isUpdating()) return;
 
       // test serial connection TODO: remove this
-      if (Serial1.available()) {
-        String empfangen = Serial1.readStringUntil('\n');
-        empfangen.toUpperCase();
-        empfangen.replace(" ", "_");
-        empfangen += "!";
-        Serial1.println(empfangen);
+      if (Serial1.available() >= 1) {
+        uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
+
+        _lastReceivedNumber = receivedByte;
+
+        Serial1.print(F("Echo (uint8_t): "));
+        Serial1.println(receivedByte);
       }
 
       /*
@@ -122,18 +126,9 @@ class SerialToDisplay : public Usermod {
       JsonObject user = root["u"];
       if (user.isNull()) user = root.createNestedObject("u");
 
-      //this code adds "u":{"ExampleUsermod":[20," lux"]} to the info object
-      //int reading = 20;
-      //JsonArray lightArr = user.createNestedArray(FPSTR(_name))); //name
-      //lightArr.add(reading); //value
-      //lightArr.add(F(" lux")); //unit
-
-      // if you are implementing a sensor usermod, you may publish sensor data
-      //JsonObject sensor = root[F("sensor")];
-      //if (sensor.isNull()) sensor = root.createNestedObject(F("sensor"));
-      //temp = sensor.createNestedArray(F("light"));
-      //temp.add(reading);
-      //temp.add(F("lux"));
+      JsonArray dataArr = user.createNestedArray(FPSTR(_name));
+      dataArr.add(_lastReceivedNumber);
+      dataArr.add(F("last nmber"));
     }
 
 
@@ -207,10 +202,8 @@ class SerialToDisplay : public Usermod {
      */
     void addToConfig(JsonObject& root)
     {
-      //JsonObject top = root.createNestedObject(FPSTR(_name));
-      Usermod::addToConfig(root); JsonObject top = root[FPSTR(_name)]; //WLEDMM
-      //top[FPSTR(_enabled)] = enabled;
-      //save these vars persistently whenever settings are saved
+      Usermod::addToConfig(root);
+      JsonObject top = root[FPSTR(_name)]; //WLEDMM
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
     }
@@ -249,7 +242,7 @@ class SerialToDisplay : public Usermod {
      * appendConfigData() is called when user enters usermod settings page
      * it may add additional metadata for certain entry fields (adding drop down is possible)
      * be careful not to add too much as oappend() buffer is limited to 3k
-     */
+     *
     void appendConfigData()
     {
       oappend(SET_F("addInfo('")); oappend(String(FPSTR(_name)).c_str()); oappend(SET_F(":great")); oappend(SET_F("',1,'<i>(this is a great config value)</i>');"));
@@ -258,6 +251,7 @@ class SerialToDisplay : public Usermod {
       oappend(SET_F("addOption(dd,'Nothing',0);"));
       oappend(SET_F("addOption(dd,'Everything',42);"));
     }
+    */
 
 
     /*
@@ -340,7 +334,7 @@ class SerialToDisplay : public Usermod {
      * getId() allows you to optionally give your V2 usermod an unique ID (please define it in const.h!).
      * This could be used in the future for the system to determine whether your usermod is installed.
      */
-    uint16_t getId()
+    uint16_t getId() // TODO: eindeutige ID
     {
       return USERMOD_ID_EXAMPLE;
     }
