@@ -1,6 +1,6 @@
 # WLED Usermod: External Serial Number Display
 
-Dieser WLED Usermod ermöglicht es dir, numerische Daten, die über eine externe serielle Schnittstelle (UART) empfangen werden, direkt auf der LED-Matrix deines MatrixPortal S3 Boards anzuzeigen. Ideal, um Messwerte, Zählerstände oder andere Zahlenwerte von externen Sensoren oder Mikrocontrollern sichtbar zu machen, ohne die WLED-Oberfläche bedienen zu müssen.
+Diese WLED Usermod ermöglicht es dir, numerische Daten, die über eine externe serielle Schnittstelle (UART) empfangen werden, direkt auf der LED-Matrix deines MatrixPortal S3 Boards anzuzeigen. Ideal, um Messwerte, Zählerstände oder andere Zahlenwerte von externen Sensoren oder Mikrocontrollern sichtbar zu machen, ohne die WLED-Oberfläche bedienen zu müssen.
 
 Auf ESP32 gibt es mehrere UART-Schnittstellen:
 
