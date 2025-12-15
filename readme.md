@@ -1,15 +1,3 @@
-<p align="center">
-  <img src="/images/wled_logo_akemi.png">
-  <a href="https://github.com/MoonModules/WLED/releases"><img src="https://img.shields.io/github/release/MoonModules/WLED.svg?style=flat-square"></a>
-  <a href="https://raw.githubusercontent.com/MoonModules/WLED/mdev/LICENSE"><img src="https://img.shields.io/github/license/MoonModules/wled?color=blue&style=flat-square"></a>
-  <a href="https://wled.discourse.group"><img src="https://img.shields.io/discourse/topics?colorB=blue&label=forum&server=https%3A%2F%2Fwled.discourse.group%2F&style=flat-square"></a>
-  <a href="https://discord.gg/4CQRmfR"><img src="https://img.shields.io/discord/700041398778331156.svg?colorB=blue&label=discord&style=flat-square"></a>
-  <a href="https://mm.kno.wled.ge"><img src="https://img.shields.io/badge/quick_start-wiki-blue.svg?style=flat-square"></a>
-  <a href="https://github.com/Aircoookie/WLED-App"><img src="https://img.shields.io/badge/app-wled-blue.svg?style=flat-square"></a>
-  <a href="https://gitpod.io/#https://github.com/MoonModules/WLED"><img src="https://img.shields.io/badge/Gitpod-ready--to--code-blue?style=flat-square&logo=gitpod"></a>
-
-  </p>
-
 # Ticket Number Display System with WLED-MM
 
 This repository contains a customized [MoonModules/WLED-MM](https://github.com/MoonModules/WLED) firmware, tailored for use as a ticket or queue number display system. The system is designed for the **Adafruit MatrixPortal S3** with a HUB75 RGB LED matrix, and features a usermod for displaying numbers received via UART.
