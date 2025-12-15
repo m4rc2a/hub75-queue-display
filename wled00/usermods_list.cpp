@@ -1,4 +1,5 @@
 #include "wled.h"
+#include "usermod_serial_to_display.h"
 
 /*
  * Register your v2 usermods here!
@@ -11,8 +12,6 @@
  * \/ \/ \/
  */
 //#include "../usermods/EXAMPLE_v2/usermod_v2_example.h"
-
-#include "../usermods/Serial_to_Display/usermod_serial_to_display.h"
 
 #ifdef USERMOD_BATTERY
 #include "../usermods/Battery/usermod_v2_Battery.h"
