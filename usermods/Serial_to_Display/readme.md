@@ -15,7 +15,7 @@ Auf ESP32 gibt es mehrere UART-Schnittstellen:
 *   [Kompatibilität](#kompatibilität)
 *   [Installation](#installation)
     *   [Dateien platzieren](#dateien-platzieren)
-    *   [Platfo< rmIO Konfiguration](#platformio-konfiguration)
+    *   [PlatformIO Konfiguration](#platformio-konfiguration)
     *   [Kompilieren und Hochladen](#kompilieren-und-hochladen)
 *   [Konfiguration (WLED Web-Interface)](#konfiguration-wled-web-interface)
 *   [Verkabelung](#verkabelung)
