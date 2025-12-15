@@ -24,6 +24,13 @@ class SerialToDisplay : public Usermod {
 
     // non WLED related methods, may be used for data exchange between usermods (non-inline methods should be defined out of class)
 
+    void reinitSerial() {
+      if (initDone && baudrate != _oldBaudrate) {
+        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
+        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
+      }
+    }
+
     /**
      * Enable/Disable the usermod
      */
@@ -224,10 +231,7 @@ class SerialToDisplay : public Usermod {
       configComplete &= getJsonValue(top["segment_id"], segment_id, 0);
       configComplete &= getJsonValue(top["baudrate"], baudrate, 9600);
 
-      if (initDone && baudrate != _oldBaudrate) {
-        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
-        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
-      }
+      reinitSerial();
 
       return configComplete;
     }
