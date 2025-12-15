@@ -5,229 +5,134 @@
 class SerialToDisplay : public Usermod {
 
   private:
+    // --- Serial configuration ---
+    int8_t uart_rx_pin;      // UART RX pin number
+    int8_t uart_tx_pin;      // UART TX pin number
+    uint32_t baudrate;       // UART baudrate
+    uint32_t prevBaudrate;   // Stores last used baudrate for reinit
 
-    // Private class members. You can declare variables and functions only accessible to your usermod here
+    // --- Display/segment configuration ---
+    int8_t segment_id;       // WLED segment index to update
 
-    // set your config variables to their default value
-    int8_t uart_rx_pin;  // Standard-Pins
-    int8_t uart_tx_pin;
-    int8_t segment_id; // wled effect Ebene
-    uint32_t baudrate; // UART boudrate
-
-    uint32_t _oldBaudrate;
-    uint8_t _lastReceivedNumber;
-
-    bool firstReceived = true;
+    // --- State tracking ---
+    uint8_t lastReceivedValue; // Last received value from serial
+    bool firstReceived = true; // True until first serial value is received
 
   public:
-    SerialToDisplay(const char *name, bool enabled):Usermod(name, enabled) {} //WLEDMM
+    /**
+     * Constructor: Initializes usermod with name and enabled state.
+     * No hardware is initialized here.
+     */
+    SerialToDisplay(const char *name, bool enabled)
+      : Usermod(name, enabled) {}
 
-    // non WLED related methods, may be used for data exchange between usermods (non-inline methods should be defined out of class)
-
+    /**
+     * Re-initialize Serial1 if baudrate has changed.
+     */
     void reinitSerial() {
-      if (initDone && baudrate != _oldBaudrate) {
-        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin); // Neuinitialisierung
-        _oldBaudrate = baudrate; // Aktualisiere die gespeicherte Baudrate
+      if (initDone && baudrate != prevBaudrate) {
+        Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin);
+        prevBaudrate = baudrate;
       }
     }
 
-    /**
-     * Enable/Disable the usermod
-     */
-    // inline void enable(bool enable) { enabled = enable; }
-
-    /**
-     * Get usermod enabled/disabled state
-     */
-    // inline bool isEnabled() { return enabled; }
-
-    // in such case add the following to another usermod:
-    //  in private vars:
-    //   #ifdef USERMOD_EXAMPLE
-    //   MyExampleUsermod* UM;
-    //   #endif
-    //  in setup()
-    //   #ifdef USERMOD_EXAMPLE
-    //   UM = (MyExampleUsermod*) usermods.lookup(USERMOD_ID_EXAMPLE);
-    //   #endif
-    //  somewhere in loop() or other member method
-    //   #ifdef USERMOD_EXAMPLE
-    //   if (UM != nullptr) isExampleEnabled = UM->isEnabled();
-    //   if (!isExampleEnabled) UM->enable(true);
-    //   #endif
-
-
-    // methods called by WLED (can be inlined as they are called only once but if you call them explicitly define them out of class)
-
     /*
      * setup() is called once at boot. WiFi is not yet connected at this point.
-     * readFromConfig() is called prior to setup()
-     * You can use it to initialize variables, sensors or similar.
+     * Initializes Serial1 with configured pins and baudrate.
      */
     void setup() {
       Serial1.begin(baudrate, SERIAL_8N1, uart_rx_pin, uart_tx_pin);
-      _oldBaudrate = baudrate;
-
+      prevBaudrate = baudrate;
       initDone = true;
     }
 
     /*
-     * loop() is called continuously. Here you can check for events, read sensors, etc.
-     *
-     * Tips:
-     * 1. You can use "if (WLED_CONNECTED)" to check for a successful network connection.
-     *    Additionally, "if (WLED_MQTT_CONNECTED)" is available to check for a connection to an MQTT broker.
-     *
-     * 2. Try to avoid using the delay() function. NEVER use delays longer than 10 milliseconds.
-     *    Instead, use a timer check as shown here.
+     * loop() is called continuously.
+     * Main logic:
+     *  - Exit if usermod is disabled or strip is updating.
+     *  - If serial data available, read one byte.
+     *  - If value changed (or first received), update segment name and trigger strip refresh.
      */
     void loop() {
-      // if usermod is disabled or called during strip updating just exit
-      // NOTE: on very long strips strip.isUpdating() may always return true so update accordingly
+      // Exit if usermod is disabled or LED strip is updating
       if (!enabled || strip.isUpdating()) return;
 
       if (Serial1.available() >= 1) {
         uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
-        // Refresh only if the value has changed
-        if (firstReceived || _lastReceivedNumber != receivedByte) {
-          _lastReceivedNumber = receivedByte;
+        // Only update if value changed or first received
+        if (firstReceived || lastReceivedValue != receivedByte) {
+          lastReceivedValue = receivedByte;
+          firstReceived = false;
 
           Segment* segment = &strip.getSegment(segment_id);
 
-          if (segment) { // test if segment even exsist
-            if (segment->name) { // test if the segment->name pointer actually points
-                                 // to a valid memory area  (prevents segmentation fault)
-              /*
-               * TODO: Find out WLED_MAX_SEGNAME_LEN (the allowed buffer size) in the wled-mm project
-               *   and use this here:
-               *     snprintf(segment->name, WLED_MAX_SEGMENT_NAME_LENGTH, "%d", lastReceivedNumber);
-               */
-              snprintf(segment->name, 4, "%d", _lastReceivedNumber); // byte --> str
-                                                                     // byte 5 --> str "5"
-                                                                     // byte 200 --> str "200"
-              strip.trigger();
-            }
+          if (segment && segment->name) {
+            // TODO: Use WLED_MAX_SEGNAME_LEN for snprintf buffer size if available
+            snprintf(segment->name, 4, "%d", lastReceivedValue); // e.g. 5 -> "5", 200 -> "200"
+            strip.trigger();
           }
         }
       }
     }
 
-
     /*
-     * addToJsonInfo() can be used to add custom entries to the /json/info part of the JSON API.
-     * Creating an "u" object allows you to add custom key/value pairs to the Info section of the WLED web UI.
-     * Below it is shown how this could be used for e.g. a light sensor
+     * Adds custom info to /json/info API.
      */
     void addToJsonInfo(JsonObject& root)
     {
-      // if "u" object does not exist yet wee need to create it
+      // Ensure "u" object exists
       JsonObject user = root["u"];
       if (user.isNull()) user = root.createNestedObject("u");
 
       JsonArray dataArr = user.createNestedArray(FPSTR(_name));
-      dataArr.add(_lastReceivedNumber);
-      dataArr.add(F("last nmber"));
+      dataArr.add(lastReceivedValue);
+      dataArr.add(F("last number"));
     }
 
-
     /*
-     * addToJsonState() can be used to add custom entries to the /json/state part of the JSON API (state object).
-     * Values in the state object may be modified by connected clients
+     * Adds custom state to /json/state API (currently unused).
      */
     void addToJsonState(JsonObject& root)
     {
-      if (!initDone || !enabled) return;  // prevent crash on boot applyPreset()
-
+      if (!initDone || !enabled) return;
       JsonObject usermod = root[FPSTR(_name)];
-
       if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
     }
 
-
     /*
-     * readFromJsonState() can be used to receive data clients send to the /json/state part of the JSON API (state object).
-     * Values in the state object may be modified by connected clients
+     * Reads custom state from /json/state API (currently unused).
      */
     void readFromJsonState(JsonObject& root)
     {
-      if (!initDone) return;  // prevent crash on boot applyPreset()
-
+      if (!initDone) return;
       JsonObject usermod = root[FPSTR(_name)];
       if (!usermod.isNull()) {
-        // expect JSON usermod data in usermod name object: {"ExampleUsermod:{"user0":10}"}
-        userVar0 = usermod["user0"] | userVar0; //if "user0" key exists in JSON, update, else keep old value
+        // TODO: Implement state update if needed
       }
     }
 
-
     /*
-     * addToConfig() can be used to add custom persistent settings to the cfg.json file in the "um" (usermod) object.
-     * It will be called by WLED when settings are actually saved (for example, LED settings are saved)
-     * If you want to force saving the current state, use serializeConfig() in your loop().
-     *
-     * CAUTION: serializeConfig() will initiate a filesystem write operation.
-     * It might cause the LEDs to stutter and will cause flash wear if called too often.
-     * Use it sparingly and always in the loop, never in network callbacks!
-     *
-     * addToConfig() will make your settings editable through the Usermod Settings page automatically.
-     *
-     * Usermod Settings Overview:
-     * - Numeric values are treated as floats in the browser.
-     *   - If the numeric value entered into the browser contains a decimal point, it will be parsed as a C float
-     *     before being returned to the Usermod.  The float data type has only 6-7 decimal digits of precision, and
-     *     doubles are not supported, numbers will be rounded to the nearest float value when being parsed.
-     *     The range accepted by the input field is +/- 1.175494351e-38 to +/- 3.402823466e+38.
-     *   - If the numeric value entered into the browser doesn't contain a decimal point, it will be parsed as a
-     *     C int32_t (range: -2147483648 to 2147483647) before being returned to the usermod.
-     *     Overflows or underflows are truncated to the max/min value for an int32_t, and again truncated to the type
-     *     used in the Usermod when reading the value from ArduinoJson.
-     * - Pin values can be treated differently from an integer value by using the key name "pin"
-     *   - "pin" can contain a single or array of integer values
-     *   - On the Usermod Settings page there is simple checking for pin conflicts and warnings for special pins
-     *     - Red color indicates a conflict.  Yellow color indicates a pin with a warning (e.g. an input-only pin)
-     *   - Tip: use int8_t to store the pin value in the Usermod, so a -1 value (pin not set) can be used
-     *
-     * See usermod_v2_auto_save.h for an example that saves Flash space by reusing ArduinoJson key name strings
-     *
-     * If you need a dedicated settings page with custom layout for your Usermod, that takes a lot more work.
-     * You will have to add the setting to the HTML, xml.cpp and set.cpp manually.
-     * See the WLED Soundreactive fork (code and wiki) for reference.  https://github.com/atuline/WLED
-     *
-     * I highly recommend checking out the basics of ArduinoJson serialization and deserialization in order to use custom settings!
+     * Adds persistent config to cfg.json.
      */
     void addToConfig(JsonObject& root)
     {
       Usermod::addToConfig(root);
-      JsonObject top = root[FPSTR(_name)]; //WLEDMM
+      JsonObject top = root[FPSTR(_name)];
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
       top["segment_id"] = segment_id;
       top["baudrate"] = baudrate;
     }
 
-
     /*
-     * readFromConfig() can be used to read back the custom settings you added with addToConfig().
-     * This is called by WLED when settings are loaded (currently this only happens immediately after boot, or after saving on the Usermod Settings page)
-     *
-     * readFromConfig() is called BEFORE setup(). This means you can use your persistent values in setup() (e.g. pin assignments, buffer sizes),
-     * but also that if you want to write persistent values to a dynamic buffer, you'd need to allocate it here instead of in setup.
-     * If you don't know what that is, don't fret. It most likely doesn't affect your use case :)
-     *
-     * Return true in case the config values returned from Usermod Settings were complete, or false if you'd like WLED to save your defaults to disk (so any missing values are editable in Usermod Settings)
-     *
-     * getJsonValue() returns false if the value is missing, or copies the value into the variable provided and returns true if the value is present
-     * The configComplete variable is true only if the "exampleUsermod" object and all values are present.  If any values are missing, WLED will know to call addToConfig() to save them
-     *
-     * This function is guaranteed to be called on boot, but could also be called every time settings are updated
+     * Reads persistent config from cfg.json.
+     * Returns true if all config values are present.
      */
     bool readFromConfig(JsonObject& root)
     {
-      // default settings values could be set here (or below using the 3-argument getJsonValue()) instead of in the class definition or constructor
-      // setting them inside readFromConfig() is slightly more robust, handling the rare but plausible use case of single value being missing after boot (e.g. if the cfg.json was manually edited and a value was removed)
-
-      bool configComplete = Usermod::readFromConfig(root);JsonObject top = root[FPSTR(_name)]; //WLEDMM
+      bool configComplete = Usermod::readFromConfig(root);
+      JsonObject top = root[FPSTR(_name)];
 
       configComplete &= getJsonValue(top["uart_rx_pin"], uart_rx_pin, 8);
       configComplete &= getJsonValue(top["uart_tx_pin"], uart_tx_pin, 18);
@@ -239,20 +144,16 @@ class SerialToDisplay : public Usermod {
       return configComplete;
     }
 
-
     /*
-     * appendConfigData() is called when user enters usermod settings page
-     * it may add additional metadata for certain entry fields (adding drop down is possible)
-     * be careful not to add too much as oappend() buffer is limited to 3k
+     * Appends additional config UI (baudrate dropdown) to usermod settings page.
      */
     void appendConfigData()
     {
-      // Erstelle ein Dropdown-Menü für die Baudrate
+      // Add baudrate dropdown to settings page
       oappend(SET_F("dd=addDropdown('"));
       oappend(String(FPSTR(_name)).c_str());
-      oappend(SET_F("','baudrate');")); // 'baudrate' ist der Schlüssel, der in addToConfig/readFromConfig verwendet wird
+      oappend(SET_F("','baudrate');"));
 
-      // Füge die gewünschten Baudraten-Optionen hinzu
       oappend(SET_F("addOption(dd,'9600',9600);"));
       oappend(SET_F("addOption(dd,'19200',19200);"));
       oappend(SET_F("addOption(dd,'38400',38400);"));
@@ -261,65 +162,43 @@ class SerialToDisplay : public Usermod {
 
       oappend(SET_F("addInfo('"));
       oappend(String(FPSTR(_name)).c_str());
-      oappend(SET_F(":baudrate',1,'<i>Wähle die Baudrate für die serielle Kommunikation.</i>');"));
+      oappend(SET_F(":baudrate',1,'<i>Select the baudrate for serial communication.</i>');"));
     }
 
-
     /*
-     * handleOverlayDraw() is called just before every show() (LED strip update frame) after effects have set the colors.
-     * Use this to blank out some LEDs or set them to a different color regardless of the set effect mode.
-     * Commonly used for custom clocks (Cronixie, 7 segment)
+     * Called before every show() (LED update frame) after effects.
+     * Can be used to override LED colors (currently unused).
      */
     void handleOverlayDraw()
     {
-      //strip.setPixelColor(0, RGBW32(0,0,0,0)) // set the first pixel to black
+      // Example: strip.setPixelColor(0, RGBW32(0,0,0,0));
     }
 
 #ifndef WLED_DISABLE_MQTT
     /**
-     * handling of MQTT message
-     * topic only contains stripped topic (part after /wled/MAC)
+     * Handles MQTT messages (currently unused).
      */
     bool onMqttMessage(char* topic, char* payload) {
-      // check if we received a command
-      //if (strlen(topic) == 8 && strncmp_P(topic, PSTR("/command"), 8) == 0) {
-      //  String action = payload;
-      //  if (action == "on") {
-      //    enabled = true;
-      //    return true;
-      //  } else if (action == "off") {
-      //    enabled = false;
-      //    return true;
-      //  } else if (action == "toggle") {
-      //    enabled = !enabled;
-      //    return true;
-      //  }
-      //}
       return false;
     }
 
     /**
-     * onMqttConnect() is called when MQTT connection is established
+     * Called when MQTT connection is established (currently unused).
      */
     void onMqttConnect(bool sessionPresent) {
-      // do any MQTT related initialisation here
-      //publishMqtt("I am alive!");
+      // No MQTT initialization needed
     }
 #endif
 
-
     /**
-     * onStateChanged() is used to detect WLED state change
-     * @mode parameter is CALL_MODE_... parameter used for notifications
+     * Called when WLED state changes (currently unused).
      */
     void onStateChange(uint8_t mode) {
-      // do something if WLED state changed (color, brightness, effect, preset, etc)
+      // No state change handling needed
     }
 
-
     /*
-     * getId() allows you to optionally give your V2 usermod an unique ID (please define it in const.h!).
-     * This could be used in the future for the system to determine whether your usermod is installed.
+     * Returns unique usermod ID.
      */
     uint16_t getId() {
       return USERMOD_ID_SERIAL_TO_DISPLAY;
