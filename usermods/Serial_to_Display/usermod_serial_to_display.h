@@ -9,15 +9,13 @@ class SerialToDisplay : public Usermod {
     // Private class members. You can declare variables and functions only accessible to your usermod here
 
     // set your config variables to their default value
-    int8_t uart_rx_pin = 8;  // Standard-Pins
-    int8_t uart_tx_pin = 18;
+    int8_t uart_rx_pin;  // Standard-Pins
+    int8_t uart_tx_pin;
+    int8_t segment_id; // wled effect Ebene
+    uint32_t baudrate; // UART boudrate
 
-    int8_t segment_id = 0;
-
-    uint32_t baudrate = 9600;
-
-    uint32_t _oldBaudrate = 0;
-
+    uint32_t _oldBaudrate;
+    
     uint8_t _lastReceivedNumber = 0;
 
 
