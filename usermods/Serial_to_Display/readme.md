@@ -2,13 +2,20 @@
 
 Dieser WLED Usermod ermöglicht es dir, numerische Daten, die über eine externe serielle Schnittstelle (UART) empfangen werden, direkt auf der LED-Matrix deines MatrixPortal S3 Boards anzuzeigen. Ideal, um Messwerte, Zählerstände oder andere Zahlenwerte von externen Sensoren oder Mikrocontrollern sichtbar zu machen, ohne die WLED-Oberfläche bedienen zu müssen.
 
+Auf ESP32 gibt es mehrere UART-Schnittstellen:
+
+- UART0: Wird normalerweise für USB-Serial/Debug verwendet (RX=3, TX=1) wled.h:321-329
+- UART1: Verfügbar für Usermods <-- Diese wird verwendet (Serial 1)
+- UART2: Wird von DMX verwendet, falls aktiviert SparkFunDMX.cpp:51
+
+
 ## Inhaltsverzeichnis
 
 *   [Features](#features)
 *   [Kompatibilität](#kompatibilität)
 *   [Installation](#installation)
     *   [Dateien platzieren](#dateien-platzieren)
-    *   [PlatformIO Konfiguration](#platformio-konfiguration)
+    *   [Platfo< rmIO Konfiguration](#platformio-konfiguration)
     *   [Kompilieren und Hochladen](#kompilieren-und-hochladen)
 *   [Konfiguration (WLED Web-Interface)](#konfiguration-wled-web-interface)
 *   [Verkabelung](#verkabelung)
