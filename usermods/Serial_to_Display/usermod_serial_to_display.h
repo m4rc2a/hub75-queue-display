@@ -155,20 +155,56 @@ class SerialToDisplay : public Usermod {
      */
     void appendConfigData()
     {
+      // Add info for UART RX pin
+      oappend(SET_F("addInfo('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F(":uart_rx_pin',1,'<i>GPIO number for UART RX (receiving data from external device).</i>');"));
+    
+      // Add info for UART TX pin
+      oappend(SET_F("addInfo('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F(":uart_tx_pin',1,'<i>GPIO number for UART TX (transmitting data to external device).</i>');"));
+    
+    
+          // Add segment_id dropdown with all segments
+      oappend(SET_F("dd2=addDropdown('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F("','segment_id');"));
+
+      for (uint8_t i = 0; i < strip.getMaxSegments(); i++) {
+        Segment* seg = &strip.getSegment(i);
+        char segLabel[40];
+        if (seg && seg->name && seg->name[0] != '\0') {
+          snprintf(segLabel, sizeof(segLabel), "%u: %s", i, seg->name);
+        } else {
+          snprintf(segLabel, sizeof(segLabel), "%u", i);
+        }
+        oappend(SET_F("addOption(dd2,'"));
+        oappend(segLabel);
+        oappend(SET_F("',"));
+        oappend(String(i).c_str());
+        oappend(SET_F(");"));
+      }
+
+      oappend(SET_F("addInfo('"));
+      oappend(String(FPSTR(_name)).c_str());
+      oappend(SET_F(":segment_id',1,'<i>Select the WLED segment to update (shows index and name).</i>');"));
+
       // Add baudrate dropdown to settings page
       oappend(SET_F("dd=addDropdown('"));
       oappend(String(FPSTR(_name)).c_str());
       oappend(SET_F("','baudrate');"));
-
+    
       oappend(SET_F("addOption(dd,'9600',9600);"));
       oappend(SET_F("addOption(dd,'19200',19200);"));
       oappend(SET_F("addOption(dd,'38400',38400);"));
       oappend(SET_F("addOption(dd,'57600',57600);"));
       oappend(SET_F("addOption(dd,'115200',115200);"));
-
+    
+      // Add info for baudrate
       oappend(SET_F("addInfo('"));
       oappend(String(FPSTR(_name)).c_str());
-      oappend(SET_F(":baudrate',1,'<i>Select the baudrate for serial communication.</i>');"));
+      oappend(SET_F(":baudrate',1,'<i>Select the baudrate for serial communication (must match external device).</i>');"));
     }
 
     /*
