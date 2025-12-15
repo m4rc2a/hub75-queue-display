@@ -98,10 +98,28 @@ class SerialToDisplay : public Usermod {
       if (Serial1.available() >= 1) {
         uint8_t receivedByte = Serial1.read(); // Read a single byte (0-255)
 
-        _lastReceivedNumber = receivedByte;
+        // Refresh only if the value has changed
+        if (_lastReceivedNumber != receivedByte) {
+          _lastReceivedNumber = receivedByte;
 
-        Serial1.print(F("Echo (uint8_t): "));
-        Serial1.println(receivedByte);
+          WS28012FX_Segment* segment = strip.getSegment(0);
+
+          if (segment) { // test if segment even exsist
+            char newSegmentName[4]; // z.B. "255" + '\0'
+
+            snprintf(newSegmentName, 4, %d, _lastReceivedNumber); // byte --> str
+                                                                  // byte 5 --> str "5"
+                                                                  // byte 200 --> str "200"
+
+            strncpy(segment-> name, newSegmentName, sizeof(segment->name) - 1);
+            segment->name[sizeof(segment->name)-1] = '\0'; // Nulltermination
+
+            strip.triggerUpdate();
+          }
+          
+          Serial1.print(F("Echo (uint8_t): "));
+          Serial1.println(receivedByte);
+        }
       }
 
       /*
