@@ -8,11 +8,12 @@ class SerialToDisplay : public Usermod {
   private:
 
     // Private class members. You can declare variables and functions only accessible to your usermod here
-    bool initDone = false;
 
     // set your config variables to their boot default value (this can also be done in readFromConfig() or a constructor if you prefer)
+    /* nicht mehr notwendig
     int8_t uart_rx_pin = 8;  // Standard-Pins  
     int8_t uart_tx_pin = 18;  
+    */
 
     // These config variables have defaults set inside readFromConfig()
 
@@ -208,8 +209,9 @@ class SerialToDisplay : public Usermod {
      */
     void addToConfig(JsonObject& root)
     {
-      JsonObject top = root.createNestedObject(FPSTR(_name));
-      top[FPSTR(_enabled)] = enabled;
+      //JsonObject top = root.createNestedObject(FPSTR(_name));
+      Usermod::addToConfig(root); JsonObject top = root[FPSTR(_name)]; //WLEDMM
+      //top[FPSTR(_enabled)] = enabled;
       //save these vars persistently whenever settings are saved
       top["uart_rx_pin"] = uart_rx_pin;
       top["uart_tx_pin"] = uart_tx_pin;
