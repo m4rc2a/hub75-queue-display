@@ -62,7 +62,7 @@ class SerialToDisplay : public Usermod {
     void setup() {
       // do your set-up here
       //Serial.println("Hello from my usermod!");
-      Serial1.begin(115200)
+      Serial1.begin(9600)
       initDone = true;
       Serial1.write("fooooo");
     }
