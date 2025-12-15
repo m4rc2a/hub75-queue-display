@@ -66,10 +66,7 @@ In order for WLED to recognize and compile this usermod, you must enable it in t
 4.  Add the following line to the `build_flags` of this block:
 
     ```ini
-    build_flags =
-        ${common.build_flags}
-        -D USERMOD_SERIAL_INT_DISPLAY ; <-- Add this line!
-        ; ... additional flags ...
+        -D USERMOD_SERIAL_INT_DISPLAY
     ```
 
     **Example for `platformio.ini`:**
@@ -82,8 +79,8 @@ In order for WLED to recognize and compile this usermod, you must enable it in t
     build_flags =
         ${common.build_flags}
         -D WLED_RELEASE_NAME=WLED-MM
-        -D USERMOD_SERIAL_INT_DISPLAY
-        ; ... other WLED_DISABLE flags or specific flags for your board ...
+        -D USERMOD_SERIAL_INT_DISPLAY  ; <-- Add this line!
+        ; ... additional flags ...
     ```
 
 ### 3. Compile and upload
