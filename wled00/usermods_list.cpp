@@ -16,6 +16,10 @@
 #include "../usermods/Serial_int_Display/usermod_serial_int_display.h"
 #endif
 
+#ifdef USERMOD_SCALE_TEXT
+#include "../usermods/Scale_Text/usermod_scale_text.h"
+#endif
+
 #ifdef USERMOD_BATTERY
 #include "../usermods/Battery/usermod_v2_Battery.h"
 #endif
@@ -416,6 +420,10 @@ void registerUsermods()
 
 #ifdef USERMOD_SERIAL_INT_DISPLAY
 usermods.add(new SerialIntDisplay("SerialIntDisplay", true));
+#endif
+
+#ifdef USERMOD_SCALE_TEXT
+usermods.add(new UsermodScaleText("ScaleText", true));
 #endif
 
 }
