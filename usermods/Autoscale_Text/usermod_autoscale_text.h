@@ -4,14 +4,14 @@
 
 #define USERMOD_ID_SCALE_TEXT 201 // Einzigartige ID vergeben
 
-class UsermodScaleText : public Usermod {
+class AutoScaleText : public Usermod {
 private:
   // --- Display/segment configuration ---
   int8_t segment_id; // WLED segment index to update
   int8_t default_scale;
 
 public:
-  UsermodScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
+  AutoScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
 
   void setup() override {
     // Initialisierungscode

@@ -16,8 +16,8 @@
 #include "../usermods/Serial_int_Display/usermod_serial_int_display.h"
 #endif
 
-#ifdef USERMOD_SCALE_TEXT
-#include "../usermods/Scale_Text/usermod_scale_text.h"
+#ifdef USERMOD_AUTOSCALE_TEXT
+#include "../usermods/Autoscale_Text/usermod_autoscale_text.h"
 #endif
 
 #ifdef USERMOD_BATTERY
@@ -422,8 +422,7 @@ void registerUsermods()
 usermods.add(new SerialIntDisplay("SerialIntDisplay", true));
 #endif
 
-#ifdef USERMOD_SCALE_TEXT
-usermods.add(new UsermodScaleText("ScaleText", true));
+#ifdef USERMOD_AUTOSCALE_TEXT
+usermods.add(new AutoScaleText("ScaleText", true));
 #endif
-
 }
