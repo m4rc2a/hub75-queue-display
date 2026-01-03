@@ -68,6 +68,9 @@ package.json           # Node.js dependencies and scripts
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
 - [ ] Add a QR code to the display for connecting to the Wi-Fi.
+- [ ] Set up Continuous Integration (CI) for automated testing, builds, and deployments
+- [ ] Releases and provide downloadable builds for easy access
+- [ ] Implement automated testing to ensure code quality and stability
 
 **WIP**: Work in Progress
 
