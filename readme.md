@@ -61,7 +61,7 @@ platformio.ini         # Hardware build configuration
 package.json           # Node.js dependencies and scripts
 ```
 
-## Future Plans
+## TODOs
 
 - [ ] Implement auto-scaling for number size based on screen resolution. (**WIP**)
 - [ ] Create a custom font with larger characters for better readability and higher resolution support.
