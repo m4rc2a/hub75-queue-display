@@ -32,6 +32,20 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 3. **Send numbers** as one Byte Numbers from the Arduino after printing.
 4. The number will be displayed on the matrix
 
+## Usermods Used in This Project
+
+WLED “usermods” are modular code extensions designed to add new features without directly editing the core WLED firmware. This makes it easier to maintain compatibility, update to newer WLED versions, and share your work with other projects.
+
+For this ticket display system, included two custom usermods:
+
+- [**Serial_int_Display**](usermods/Serial_int_Display/readme.md)
+  Receives a byte value via the serial port (UART) and displays it using the WLED text effect.  
+  This lets external microcontrollers (like Arduinos) easily send numbers for display.
+
+- [**Scale_Text**](usermods/Scale_Text/readme.md)
+  Automatically scales text to fit the LED matrix’s resolution for maximum readability.
+  This makes text effects robust for different display sizes and is reusable for other WLED setups.
+
 ## Installation
 
 1. Clone this repo.
