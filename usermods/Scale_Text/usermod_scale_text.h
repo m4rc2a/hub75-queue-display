@@ -16,6 +16,50 @@ private:
   // --- Display/segment configuration ---
   int8_t segment_id; // WLED segment index to update
   int8_t default_scale;
+  size_t charCount;
+
+  size_t countChars(const char *text) {
+    size_t count = 0;
+    for (const char *p = text; *p; ++p)
+      if (*p > 31 && *p < 128) // Zähle nur druckbare ASCII-Zeichen
+        ++count;
+    return count;
+  }
+
+  int getTextPixelWidth(const Segment &seg) {
+    // Schriftgröße bestimmen
+    int fontSize = map(seg.custom2, 0, 255, 1, 5);
+    int letterWidth;
+
+    switch (fontSize) {
+    default:
+    case 1: letterWidth = 4; break;
+    case 2: letterWidth = 5; break;
+    case 3: letterWidth = 6; break;
+    case 4: letterWidth = 7; break;
+    case 5: letterWidth = 5; break;
+    }
+
+    // TODO: spacing between letters?
+    return charCount * letterWidth * seg.grouping;
+  }
+
+  int getTextPixelHeight(const Segment &seg) {
+    // Schriftgröße bestimmen
+    int fontSize = map(seg.custom2, 0, 255, 1, 5);
+    int letterHeight;
+
+    switch (fontSize) {
+    default:
+    case 1: letterHeight = 6; break;
+    case 2: letterHeight = 8; break;
+    case 3: letterHeight = 8; break;
+    case 4: letterHeight = 9; break;
+    case 5: letterHeight = 12; break;
+    }
+
+    return letterHeight * seg.grouping;
+  }
 
   inline bool isPrintableCustom(char c) {
     return (c >= PRINTABLE_CHAR_MIN && c <= PRINTABLE_CHAR_MAX);
@@ -24,46 +68,25 @@ private:
 public:
   UsermodScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
 
+  /**
+   * Prüft, ob der Text im Segment mit den aktuellen Einstellungen
+   * (Fontgröße, Gruppierung) ins Segment passt.
+   *
+   * @param seg            Das zu prüfende Segment
+   * @param text           Der anzuzeigende Text
+   * @param outTextWidth  (optional) Rückgabe der berechneten Textbreite in
+   * Pixeln
+   * @param outTextHeight (optional) Rückgabe der berechneten Texthöhe in
+   * Pixeln
+   *
+   * Rückgabe: true, wenn der Text ins Segment passt, sonst false.
+   */
   bool textFitsInSegment(
       const Segment &seg, const char *text, int *outTextWidth = nullptr,
       int *outTextHeight = nullptr) // optionale Parameter für Debug
   {
-    // Schriftgröße bestimmenk
-    int fontSize = map(seg.custom2, 0, 255, 1, 5);
-    int letterWidth, letterHeight;
-
-    switch (fontSize) {
-    default:
-    case 1:
-      letterWidth = 4;
-      letterHeight = 6;
-      break;
-    case 2:
-      letterWidth = 5;
-      letterHeight = 8;
-      break;
-    case 3:
-      letterWidth = 6;
-      letterHeight = 8;
-      break;
-    case 4:
-      letterWidth = 7;
-      letterHeight = 9;
-      break;
-    case 5:
-      letterWidth = 5;
-      letterHeight = 12;
-      break;
-    }
-
-    // Zeichen zählen (ASCII-Filter wie im Original)
-    size_t count = 0;
-    for (const char *p = text; *p; ++p)
-      if (*p > 31 && *p < 128) // Zähle nur druckbare ASCII-Zeichen
-        ++count;
-
-    int physTextWidth = count * letterWidth * seg.grouping;
-    int physTextHeight = letterHeight * seg.grouping;
+    int physTextWidth = getTextPixelWidth(seg);
+    int physTextHeight = getTextPixelHeight(seg);
 
     int segmentWidth = seg.width();
     int segmentHeight = seg.height();
@@ -73,22 +96,17 @@ public:
     if (outTextHeight)
       *outTextHeight = physTextHeight;
 
-    // Prüfen, ob der Text in das Segment passt
     return physTextWidth <= segmentWidth && physTextHeight <= segmentHeight;
   }
 
-  /**
-   * Skaliert die Schriftgröße (seg.custom2) und Gruppierung (seg.grouping)
-   * so weit wie möglich – der Text muss noch ins Segment passen!
-   * Gibt true zurück, wenn Anpassung erfolgreich.
-   */
   /**
    * Skaliert Schriftgröße und Gruppierung, so dass seg->name möglichst groß
    * angezeigt wird und noch ins Segment passt. Ein Rand ("gap") kann
    * angegeben werden.
    *
    * @param seg     Das zu verarbeitende Segment
-   * @param gap     Abstand (Pixel) zum Rand, z.B. 2. (Kann aus Settings kommen)
+   * @param gap     Abstand (Pixel) zum Rand, z.B. 2. (Kann aus Settings
+   * kommen)
    *
    * Rückgabe: true, wenn Anpassung möglich, sonst false.
    */
@@ -159,20 +177,11 @@ public:
 
     Segment &seg = strip.getSegment(segment_id);
 
-    // ---- Auto-Skalierung ----
+    charCount = countChars(seg.name ? seg.name : ""); // TODO: nur bei Änderung
+
+    // ---- Auto-Skalierung ---- TODO
     // Passe Font & Grouping optimal aufs Segment an!
     maximizeFontAndGrouping(seg, /* gap: */ 1);
-
-// Jetzt kannst du sinnvoll weiterarbeiten!
-// z.B. eigene Zeichnungsroutinen, Logging, Debug
-// Optional: Status-Infos ausgeben
-#ifdef SCALE_TEXT_DEBUG
-    int tw, th;
-    textFitsInSegment(seg, seg.name, &tw, &th);
-    Serial.printf("AutoText: Font=%d, Grouping=%d, Text='%s', W=%d, H=%d\n",
-                  map(seg.custom2, 0, 255, 1, 5), seg.grouping,
-                  seg.name ? seg.name : "", tw, th);
-#endif
 
     // Optional: strip.show() (meist handled WLED das)
   }
