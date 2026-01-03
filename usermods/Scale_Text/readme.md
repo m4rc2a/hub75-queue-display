@@ -31,12 +31,10 @@
 - [ ] Translate all code comments, variable/function names, and documentation from German to English
 
 ## Example Usage
-
 1. **Assign a “Text” effect segment in the WLED web interface.**
 2. **This usermod will automatically maximize font size and grouping** so that your text fills the matrix as much as possible.
 
-## ⚙️ Installation
-
+## Installation
 1. Copy `usermod_scale_text.h` to `wled00/usermods/` in your WLED source tree.
 2. Add to your `platformio.ini` (e.g. under your build environment):
    -D USERMOD_SCALE_TEXT
@@ -53,6 +51,5 @@ Compile and upload.
 
 
 ## Compatibility
-
 Developed for WLED-MM and similar forks (ESP32, MatrixPortal S3, etc.)
 Should work wherever WLED’s segment and text/grouping features exist.
