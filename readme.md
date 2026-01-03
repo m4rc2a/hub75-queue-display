@@ -63,7 +63,8 @@ package.json           # Node.js dependencies and scripts
 
 ## Future Plans
 
-- [ ] Integration of a larger and more readable font for number display.
+- [ ] Implement auto-scaling for number size based on screen resolution.
+- [ ] Create a custom font with larger characters for better readability and higher resolution support.
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
 - [ ] Add a QR code to the display for connecting to the Wi-Fi.
