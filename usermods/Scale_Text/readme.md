@@ -9,7 +9,7 @@
 - The logic is implemented in the `maximizeFontAndGrouping` function, with additional helper methods for sizing and printable-character detection.
 
 > ⚠️ **Note:**  
-> No optimizations for efficiency are implemented yet—this calculation happens each loop.
+> No optimizations for efficiency are implemented yet the calculation happens each loop.
 
 ## Status
 - Triggering of `maximizeFontAndGrouping`: Right now, this is called every cycle in the main loop —-> no intelligent change detection yet.
