@@ -2,8 +2,8 @@
 
 #include "wled.h" // WLED Basis-Funktionen & Usermod-Basisklasse
 
-#define PRINTABLE_CHAR_MIN 32     // Standard: Space
-#define PRINTABLE_CHAR_MAX 127    // Standard: "~"
+#define PRINTABLE_CHAR_MIN 31     // Standard: Space
+#define PRINTABLE_CHAR_MAX 128    // Standard: "~"
 #define USERMOD_ID_SCALE_TEXT 201 // Einzigartige ID vergeben
 #define SCALE_TEXT_MAX_FONT 5
 #define SCALE_TEXT_MIN_FONT 1
@@ -18,17 +18,23 @@ private:
   int8_t default_scale;
   size_t charCount;
 
+  inline bool isPrintableCustom(char c) {
+    return (c >= PRINTABLE_CHAR_MIN && c <= PRINTABLE_CHAR_MAX);
+  }
+
+  // Hilfsmethode: Zählt druckbare Zeichen im Text
   size_t countChars(const char *text) {
     size_t count = 0;
     for (const char *p = text; *p; ++p)
-      if (*p > 31 && *p < 128) // Zähle nur druckbare ASCII-Zeichen
+      if (isPrintableCustom(*p))
         ++count;
+
     return count;
   }
 
-  int getTextPixelWidth(const Segment &seg) {
-    // Schriftgröße bestimmen
-    int fontSize = map(seg.custom2, 0, 255, 1, 5);
+  // Hilfsmethode: Berechnet Textbreite in Pixeln basierend auf Fontgröße und
+  // Gruppierung
+  int getTextPixelWidth(uint8_t fontSize, uint8_t grouping) {
     int letterWidth;
 
     switch (fontSize) {
@@ -41,12 +47,12 @@ private:
     }
 
     // TODO: spacing between letters?
-    return charCount * letterWidth * seg.grouping;
+    return charCount * letterWidth * grouping;
   }
 
-  int getTextPixelHeight(const Segment &seg) {
-    // Schriftgröße bestimmen
-    int fontSize = map(seg.custom2, 0, 255, 1, 5);
+  // Hilfsmethode: Berechnet Texthöhe in Pixeln basierend auf Fontgröße und
+  // Gruppierung
+  int getTextPixelHeight(uint8_t fontSize, uint8_t grouping) {
     int letterHeight;
 
     switch (fontSize) {
@@ -58,43 +64,26 @@ private:
     case 5: letterHeight = 12; break;
     }
 
-    return letterHeight * seg.grouping;
-  }
-
-  inline bool isPrintableCustom(char c) {
-    return (c >= PRINTABLE_CHAR_MIN && c <= PRINTABLE_CHAR_MAX);
+    return letterHeight * grouping;
   }
 
 public:
   UsermodScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
 
   /**
-   * Prüft, ob der Text im Segment mit den aktuellen Einstellungen
-   * (Fontgröße, Gruppierung) ins Segment passt.
+   * Prüft, ob der Text mit den bestimmten Einstellungen in das Segment passt.
    *
-   * @param seg            Das zu prüfende Segment
-   * @param text           Der anzuzeigende Text
-   * @param outTextWidth  (optional) Rückgabe der berechneten Textbreite in
-   * Pixeln
-   * @param outTextHeight (optional) Rückgabe der berechneten Texthöhe in
-   * Pixeln
-   *
-   * Rückgabe: true, wenn der Text ins Segment passt, sonst false.
+   * @param segmentWidth   Breite des Segments in Pixeln
+   * @param segmentHeight  Höhe des Segments in Pixeln
+   * @param fontSize       Schriftgröße (1-5)
+   * @param grouping       Gruppierung (1-10)
+   * @param charCount      Anzahl der druckbaren Zeichen im Text
+   * @return true, wenn der Text passt, sonst false
    */
-  bool textFitsInSegment(
-      const Segment &seg, const char *text, int *outTextWidth = nullptr,
-      int *outTextHeight = nullptr) // optionale Parameter für Debug
-  {
-    int physTextWidth = getTextPixelWidth(seg);
-    int physTextHeight = getTextPixelHeight(seg);
-
-    int segmentWidth = seg.width();
-    int segmentHeight = seg.height();
-
-    if (outTextWidth)
-      *outTextWidth = physTextWidth;
-    if (outTextHeight)
-      *outTextHeight = physTextHeight;
+  bool textFitsInSegment(int segmentWidth, int segmentHeight, uint8_t fontSize,
+                         uint8_t grouping, size_t charCount) {
+    int physTextWidth = getTextPixelWidth(fontSize, grouping);
+    int physTextHeight = getTextPixelHeight(fontSize, grouping);
 
     return physTextWidth <= segmentWidth && physTextHeight <= segmentHeight;
   }
@@ -118,51 +107,50 @@ public:
     uint8_t font = SCALE_TEXT_MIN_FONT;
     uint8_t grouping = SCALE_TEXT_MIN_GROUPING;
 
+    int textSpaceX = seg.width() - 2 * gap;  // Links/rechts Rand beachten
+    int textSpaceY = seg.height() - 2 * gap; // Oben/unten Rand beachten
+
     // Schritt 1: Maximale Font finden
     for (uint8_t f = SCALE_TEXT_MIN_FONT; f <= SCALE_TEXT_MAX_FONT; f++) {
-      seg.custom2 = map(f, SCALE_TEXT_MIN_FONT, SCALE_TEXT_MAX_FONT, 0, 255);
-
       // Displayfläche um gap verkleinern
-      int phys_x = seg.width() - 2 * gap;  // Links/rechts Rand beachten
-      int phys_y = seg.height() - 2 * gap; // Oben/unten Rand beachten
 
-      int dummyW, dummyH; // Falls gebraucht
-      // Prüfe mit gepatchten Segmentmaßen (virtuelles Segment mit Abzug)
-      Segment tmpSeg = seg;
-      tmpSeg._widthRaw = max(1, phys_x);
-      tmpSeg._heightRaw = max(1, phys_y);
-
-      if (!textFitsInSegment(tmpSeg, text, &dummyW, &dummyH)) {
-        font = (f > SCALE_TEXT_MIN_FONT) ? f - 1 : f;
-        seg.custom2 =
-            map(font, SCALE_TEXT_MIN_FONT, SCALE_TEXT_MAX_FONT, 0, 255);
-        break;
+      if (textFitsInSegment(textSpaceX, textSpaceY, f, grouping, charCount)) {
+        if (f >= SCALE_TEXT_MAX_FONT) {
+          font = f;
+          break;
+        }
       } else {
-        font = f;
+        if (f >= SCALE_TEXT_MIN_FONT) {
+          font = SCALE_TEXT_MIN_FONT;
+        } else {
+          font = f - 1;
+        }
+        break;
       }
     }
 
     // Schritt 2: Max grouping bestimmen
     for (uint8_t g = SCALE_TEXT_MIN_GROUPING; g <= SCALE_TEXT_MAX_GROUPING;
          g++) {
-      seg.grouping = g;
 
-      // Bereich wieder mit gap prüfen
-      int phys_x = seg.width() - 2 * gap;
-      int phys_y = seg.height() - 2 * gap;
-
-      Segment tmpSeg = seg;
-      tmpSeg._widthRaw = max(1, phys_x);
-      tmpSeg._heightRaw = max(1, phys_y);
-
-      if (!textFitsInSegment(tmpSeg, text)) {
-        grouping = (g > SCALE_TEXT_MIN_GROUPING) ? g - 1 : g;
-        seg.grouping = grouping;
-        break;
+      if (textFitsInSegment(textSpaceX, textSpaceY, font, g, charCount)) {
+        if (g >= SCALE_TEXT_MAX_GROUPING) {
+          grouping = g;
+          break;
+        }
       } else {
-        grouping = g;
+        if (g >= SCALE_TEXT_MIN_GROUPING) {
+          grouping = SCALE_TEXT_MIN_GROUPING;
+        } else {
+          grouping = g - 1;
+        }
+        break;
       }
     }
+
+    seg.custom1 = font;     // Schriftgröße setzen
+    seg.custom2 = grouping; // Gruppierung setzen
+
     // Anpassung erfolgreich, falls mind. minimal möglich
     return font >= SCALE_TEXT_MIN_FONT && grouping >= SCALE_TEXT_MIN_GROUPING;
   }
