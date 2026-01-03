@@ -63,7 +63,7 @@ package.json           # Node.js dependencies and scripts
 
 ## Future Plans
 
-- [ ] Implement auto-scaling for number size based on screen resolution. (WIP)
+- [ ] Implement auto-scaling for number size based on screen resolution. (**WIP**)
 - [ ] Create a custom font with larger characters for better readability and higher resolution support.
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
