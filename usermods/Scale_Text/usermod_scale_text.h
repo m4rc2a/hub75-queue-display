@@ -18,12 +18,13 @@ private:
   int8_t default_scale;
   size_t charCount;
 
+  // Hilfsmethode: Prüft, ob ein Zeichen druckbar ist
   inline bool isPrintableCustom(char c) {
     return (c >= PRINTABLE_CHAR_MIN && c <= PRINTABLE_CHAR_MAX);
   }
 
   // Hilfsmethode: Zählt druckbare Zeichen im Text
-  size_t countChars(const char *text) {
+  inline size_t countChars(const char *text) {
     size_t count = 0;
     for (const char *p = text; *p; ++p)
       if (isPrintableCustom(*p))
@@ -78,6 +79,7 @@ public:
    * @param fontSize       Schriftgröße (1-5)
    * @param grouping       Gruppierung (1-10)
    * @param charCount      Anzahl der druckbaren Zeichen im Text
+   *
    * @return true, wenn der Text passt, sonst false
    */
   bool textFitsInSegment(int segmentWidth, int segmentHeight, uint8_t fontSize,
@@ -90,14 +92,14 @@ public:
 
   /**
    * Skaliert Schriftgröße und Gruppierung, so dass seg->name möglichst groß
-   * angezeigt wird und noch ins Segment passt. Ein Rand ("gap") kann
-   * angegeben werden.
+   * angezeigt wird und noch ins Segment passt. Dabei wird auch die möglichst
+   * größte Font gewählt. Ein Rand ("gap") kann angegeben werden.
    *
    * @param seg     Das zu verarbeitende Segment
    * @param gap     Abstand (Pixel) zum Rand, z.B. 2. (Kann aus Settings
    * kommen)
    *
-   * Rückgabe: true, wenn Anpassung möglich, sonst false.
+   * @return true, wenn Anpassung erfolgreich, sonst false.
    */
   bool maximizeFontAndGrouping(Segment &seg,
                                uint8_t gap = SCALE_TEXT_DEFAULT_GAP) {
@@ -110,7 +112,7 @@ public:
     int textSpaceX = seg.width() - 2 * gap;  // Links/rechts Rand beachten
     int textSpaceY = seg.height() - 2 * gap; // Oben/unten Rand beachten
 
-    // Schritt 1: Maximale Font finden
+    // Maximale Font finden
     for (uint8_t f = SCALE_TEXT_MIN_FONT; f <= SCALE_TEXT_MAX_FONT; f++) {
       // Displayfläche um gap verkleinern
 
@@ -129,7 +131,7 @@ public:
       }
     }
 
-    // Schritt 2: Max grouping bestimmen
+    // Max grouping bestimmen
     for (uint8_t g = SCALE_TEXT_MIN_GROUPING; g <= SCALE_TEXT_MAX_GROUPING;
          g++) {
 
