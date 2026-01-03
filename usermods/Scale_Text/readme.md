@@ -12,7 +12,7 @@
 > No optimizations for efficiency are implemented yet the calculation happens each loop.
 
 ## Status
-- Triggering of `maximizeFontAndGrouping`: Right now, this is called every cycle in the main loop —> no intelligent change detection yet.
+- Triggering of `maximizeFontAndGrouping`: Right now, this is called every cycle in the main loop -> no intelligent change detection yet.
 - Configuration is minimal and direct. The main value: always have clear, large text filling your segment.
 
 ## TODOs
