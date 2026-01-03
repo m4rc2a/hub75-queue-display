@@ -8,9 +8,8 @@
 - Uses WLED’s "grouping" feature to additionally scale text until it fills the available segment area.
 - The logic is implemented in the `maximizeFontAndGrouping` function, with additional helper methods for sizing and printable-character detection.
 
-**Note:**
-- The usermod currently just maximizes font size and grouping *based on the text and segment size.  
-- No optimizations for efficiency are implemented yet—this calculation happens each loop.
+> ⚠️ **Note:**  
+> No optimizations for efficiency are implemented yet—this calculation happens each loop.
 
 ## Status
 - Triggering of `maximizeFontAndGrouping`: Right now, this is called every cycle in the main loop —-> no intelligent change detection yet.
