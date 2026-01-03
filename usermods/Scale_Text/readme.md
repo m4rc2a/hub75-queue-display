@@ -12,13 +12,11 @@
 - The usermod currently just maximizes font size and grouping *based on the text and segment size.  
 - No optimizations for efficiency are implemented yet—this calculation happens each loop.
 
-## Status / Current Limitations
-
+## Status
 - Triggering of `maximizeFontAndGrouping`: Right now, this is called every cycle in the main loop —-> no intelligent change detection yet.
 - Configuration is minimal and direct. The main value: always have clear, large text filling your segment.
 
-## Future Plans
-
+## TODOs
 - [ ] Efficient updating  
   - Only call `maximizeFontAndGrouping()` when the text changes, not on every loop. Improves performance.
 
