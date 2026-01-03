@@ -1,6 +1,6 @@
 # WLED Usermod: Scale_Text
 
-**Automatically select the optimal font size and scaling (“grouping”) for your text on WLED LED matrices, so your message is as big as possible—always!**
+**Automatically select the optimal font size and scaling (“grouping”) for your text on WLED LED matrices, so your message is as big as possible**
 
 ## What does this usermod currently do?
 
