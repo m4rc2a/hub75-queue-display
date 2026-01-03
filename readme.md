@@ -79,7 +79,7 @@ package.json           # Node.js dependencies and scripts
 Special thanks to  
 - [WLED](https://github.com/Aircoookie/WLED)  
 - [WLED-MM (MoonModules)](https://github.com/MoonModules/WLED)  
-- Siemens Professional Education (SPE)
+- [Siemens Professional Education (SPE)](https://www.siemens.com/de/de/unternehmen/jobs/siemens-professional-education.html)
 
 ## License 
 WLED-MM is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl) or later.  
