@@ -71,6 +71,7 @@ package.json           # Node.js dependencies and scripts
 - [ ] Set up Continuous Integration (CI) for automated testing, builds, and deployments
 - [ ] Releases and provide downloadable builds for easy access
 - [ ] Implement automated testing to ensure code quality and stability
+- [ ] Rename the `Serial_int_Display` usermod to a more generic and descriptive name, since it currently receives a byte (not an int). The new name should reflect its present and future capabilities.
 
 **WIP**: Work in Progress
 
