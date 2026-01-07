@@ -4,7 +4,7 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 
 ## Project Overview
 
-- **Purpose:** Realize a ticket/queue system where numbers are drawn, printed, and displayed on a large LED matrix.
+- **Purpose:** Realize a ticket/queue system where numbers are drawn on a large LED matrix.
 - **Workflow:**  
   1. A number is drawn and printed using a thermal printer controlled by an Arduino.
   2. After printing, the Arduino sends the number via UART to the MatrixPortal S3 running WLED-MM.
