@@ -10,12 +10,16 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
   2. After printing, the Arduino sends the number via UART to the MatrixPortal S3 running WLED-MM.
   3. The number is displayed on the HUB75 LED matrix.
 
-## Hardware
+## Hardware Support
 
-- **Display Controller:** Adafruit MatrixPortal S3
-- **LED Matrix:** HUB75 compatible RGB panel
-- **Communication:** UART (default RX: GPIO8, TX: GPIO18)
-- **Other Boards:** Other ESP32-S3 boards may work, but only MatrixPortal S3 is tested.
+- **Display Controller:**
+  - Adafruit MatrixPortal S3
+  - **Other Boards:** Other ESP32-S3 boards may work, but only MatrixPortal S3 is tested.
+
+- **LED Matrix:** 
+  - HUB75 compatible RGB panel
+- **Communication:**
+  - UART (default RX: GPIO8, TX: GPIO18)
 
 ## Features
 
