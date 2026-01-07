@@ -12,12 +12,13 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 
 ## Hardware Support
 
-- **Display Controller:**
+- **LED Matrix Controller:**
   - Adafruit MatrixPortal S3
   - **Other Boards:** Other ESP32-S3 boards may work, but only MatrixPortal S3 is tested.
 
 - **LED Matrix:** 
   - HUB75 compatible RGB panel
+
 - **Communication:**
   - UART (default RX: GPIO8, TX: GPIO18)
 
