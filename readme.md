@@ -4,19 +4,23 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 
 ## Project Overview
 
-- **Purpose:** Realize a ticket/queue system where numbers are drawn, printed, and displayed on a large LED matrix.
+- **Purpose:** Realize a ticket/queue system where numbers are drawn on a large LED matrix.
 - **Workflow:**  
   1. A number is drawn and printed using a thermal printer controlled by an Arduino.
   2. After printing, the Arduino sends the number via UART to the MatrixPortal S3 running WLED-MM.
   3. The number is displayed on the HUB75 LED matrix.
-- **Firmware:** This repo contains only the customized WLED-MM firmware with the Serial-to-Display usermod enabled.
 
-## Hardware
+## Hardware Support
 
-- **Display Controller:** Adafruit MatrixPortal S3
-- **LED Matrix:** HUB75 compatible RGB panel
-- **Communication:** UART (default RX: GPIO8, TX: GPIO18)
-- **Other Boards:** Other ESP32-S3 boards may work, but only MatrixPortal S3 is tested.
+- **LED Matrix Controller:**
+  - Adafruit MatrixPortal S3
+  - **Other Boards:** Other ESP32 boards may work, but only MatrixPortal S3 is tested.
+
+- **LED Matrix:** 
+  - HUB75 compatible RGB panel
+
+- **Communication:**
+  - UART (default RX: GPIO8, TX: GPIO18)
 
 ## Features
 
@@ -31,6 +35,20 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 2. **Connect UART** from your Arduino (TX) to MatrixPortal S3 (RX, GPIO8), and GND to GND.
 3. **Send numbers** as one Byte Numbers from the Arduino after printing.
 4. The number will be displayed on the matrix
+
+## Usermods Used in This Project
+
+WLED “usermods” are modular code extensions designed to add new features without directly editing the core WLED firmware. This makes it easier to maintain compatibility, update to newer WLED versions, and share your work with other projects.
+
+For this ticket display system, included two custom usermods:
+
+- [**Serial_int_Display**](usermods/Serial_int_Display/readme.md)
+  Receives a byte value via the serial port (UART) and displays it using the WLED text effect.  
+  This lets external microcontrollers (like Arduinos) easily send numbers for display.
+
+- [**Scale_Text**](usermods/Scale_Text/readme.md)
+  Automatically scales text to fit the LED matrix’s resolution for maximum readability.
+  This makes text effects robust for different display sizes and is reusable for other WLED setups.
 
 ## Installation
 
@@ -61,19 +79,26 @@ platformio.ini         # Hardware build configuration
 package.json           # Node.js dependencies and scripts
 ```
 
-## Future Plans
+## TODOs
 
-- [ ] Integration of a larger and more readable font for number display.
+- [ ] Implement auto-scaling for number size based on screen resolution. (**WIP**)
+- [ ] Create a custom font with larger characters for better readability and higher resolution support.
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
 - [ ] Add a QR code to the display for connecting to the Wi-Fi.
+- [ ] Set up Continuous Integration (CI) for automated testing, builds, and deployments
+- [ ] Releases and provide downloadable builds for easy access
+- [ ] Implement automated testing to ensure code quality and stability
+- [ ] Rename the `Serial_int_Display` usermod to a more generic and descriptive name, since it currently receives a byte (not an int). The new name should reflect its present and future capabilities.
+
+**WIP**: Work in Progress
 
 ## Special Thanks
 
 Special thanks to  
 - [WLED](https://github.com/Aircoookie/WLED)  
 - [WLED-MM (MoonModules)](https://github.com/MoonModules/WLED)  
-- Siemens Professional Education (SPE)
+- [Siemens Professional Education (SPE)](https://www.siemens.com/de/de/unternehmen/jobs/siemens-professional-education.html)
 
 ## License 
 WLED-MM is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl) or later.  
