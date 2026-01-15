@@ -93,9 +93,7 @@ package.json           # Node.js dependencies and scripts
 
 **WIP**: Work in Progress
 
-## Special Thanks
-
-Special thanks to  
+## Special thanks to  
 - [WLED](https://github.com/Aircoookie/WLED)  
 - [WLED-MM (MoonModules)](https://github.com/MoonModules/WLED)  
 - [Siemens Professional Education (SPE)](https://www.siemens.com/de/de/unternehmen/jobs/siemens-professional-education.html)
