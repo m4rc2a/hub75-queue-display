@@ -11,7 +11,7 @@
 #define SCALE_TEXT_MIN_GROUPING 1
 #define SCALE_TEXT_DEFAULT_GAP 1 // Standard 1px, kann angepasst werden
 
-class UsermodScaleText : public Usermod {
+class AutoScaleText : public Usermod {
 private:
   // --- Display/segment configuration ---
   int8_t segment_id; // WLED segment index to update
@@ -69,7 +69,7 @@ private:
   }
 
 public:
-  UsermodScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
+  AutoScaleText(const char *name, bool enabled) : Usermod(name, enabled) {}
 
   /**
    * Prüft, ob der Text mit den bestimmten Einstellungen in das Segment passt.
