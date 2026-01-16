@@ -102,5 +102,5 @@ package.json           # Node.js dependencies and scripts
 - [Siemens Professional Education (SPE)](https://www.siemens.com/de/de/unternehmen/jobs/siemens-professional-education.html)
 
 ## License 
-WLED-MM is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl) or later.  
+The WLED-MM and the **hub75-queue-display** projects are licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl) or later.
 The official license text is [available in 23 languages](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
