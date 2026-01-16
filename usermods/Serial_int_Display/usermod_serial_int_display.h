@@ -28,9 +28,9 @@ public:
 
   void setSegmentPointer() {
     if (segment_id >= 0 && segment_id < strip.getMaxSegments()) {
-      mySegment = &strip.getSegment(segment_id);
+      segment = &strip.getSegment(segment_id);
     } else {
-      mySegment = nullptr;
+      segment = nullptr;
     }
   }
 
