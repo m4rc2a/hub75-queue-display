@@ -1,6 +1,8 @@
 # Ticket Number Display System with WLED-MM
 
-This repository contains a customized [MoonModules/WLED-MM](https://github.com/MoonModules/WLED) firmware, tailored for use as a ticket or queue number display system. The system is designed for the **Adafruit MatrixPortal S3** with a HUB75 RGB LED matrix, and features a usermod for displaying numbers received via UART.
+**This firmware is a customized fork of [MoonModules/WLED-MM](https://github.com/MoonModules/WLED) for ticket and queue number display.**
+Upstream updates from WLED-MM are regularly merged.
+All “_Ticket System_” features are maintained in separate usermods and build config for easy merging.
 
 ## Project Overview
 
@@ -29,13 +31,6 @@ This repository contains a customized [MoonModules/WLED-MM](https://github.com/M
 - Web UI for configuration and manual testing (WLED-MM).
 - All standard WLED-MM features are available.
 
-## Quick Start
-
-1. **Flash the firmware** in this repo to your MatrixPortal S3 (see [Installation](#installation)).
-2. **Connect UART** from your Arduino (TX) to MatrixPortal S3 (RX, GPIO8), and GND to GND.
-3. **Send numbers** as one Byte Numbers from the Arduino after printing.
-4. The number will be displayed on the matrix
-
 ## Usermods Used in This Project
 
 WLED “usermods” are modular code extensions designed to add new features without directly editing the core WLED firmware. This makes it easier to maintain compatibility, update to newer WLED versions, and share your work with other projects.
@@ -49,6 +44,13 @@ For this ticket display system, included two custom usermods:
 - [**Scale_Text**](usermods/Scale_Text/readme.md)
   Automatically scales text to fit the LED matrix’s resolution for maximum readability.
   This makes text effects robust for different display sizes and is reusable for other WLED setups.
+
+## Quick Start
+
+1. **Flash the firmware** in this repo to your MatrixPortal S3 (see [Installation](#installation)).
+2. **Connect UART** from your Arduino (TX) to MatrixPortal S3 (RX, GPIO8), and GND to GND.
+3. **Send numbers** as one Byte Numbers from the Arduino after printing.
+4. The number will be displayed on the matrix
 
 ## Installation
 
@@ -82,13 +84,14 @@ package.json           # Node.js dependencies and scripts
 ## TODOs
 
 - [ ] Implement auto-scaling for number size based on screen resolution. (**WIP**)
+- [ ] Set up Continuous Integration (CI) for automated testing, builds, and deployments (**WIP**)
+- [ ] Releases and provide downloadable builds for easy access (**WIP**)
+- [ ] add nix-direnv for faster Development setup
+- [ ] Implement automated testing to ensure code quality and stability
 - [ ] Create a custom font with larger characters for better readability and higher resolution support.
 - [ ] Animated transitions when new numbers are received and displayed.
 - [ ] Further improvements to usability and visual appearance.
 - [ ] Add a QR code to the display for connecting to the Wi-Fi.
-- [ ] Set up Continuous Integration (CI) for automated testing, builds, and deployments
-- [ ] Releases and provide downloadable builds for easy access
-- [ ] Implement automated testing to ensure code quality and stability
 - [ ] Rename the `Serial_int_Display` usermod to a more generic and descriptive name, since it currently receives a byte (not an int). The new name should reflect its present and future capabilities.
 
 **WIP**: Work in Progress
