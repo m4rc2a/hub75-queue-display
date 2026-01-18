@@ -1,7 +1,9 @@
 # Ticket Number Display System with WLED-MM
 
 **This firmware is a customized fork of [MoonModules/WLED-MM](https://github.com/MoonModules/WLED) for ticket and queue number display.**
+
 Upstream updates from WLED-MM are regularly merged.
+
 All “_Ticket System_” features are maintained in separate usermods and build config for easy merging.
 
 ## Project Overview
